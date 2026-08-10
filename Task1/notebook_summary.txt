@@ -1,0 +1,660 @@
+---CELL 0 [markdown]---
+# MLOps Training 2026/2027 — Task 1: Get the Data Into a Database
+
+**Goal:** Download the Olist e-commerce dataset, load it into a PostgreSQL database, and verify it with queries and joins.
+
+**Dataset:** [Olist Brazilian E-Commerce](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) — a real, multi-table e-commerce dataset from a Brazilian marketplace. The tables are linked through `order_id`, `customer_id`, `product_id`, and `seller_id`.
+
+**Business problem we're preparing for:** predict whether an order will be **delivered late or on time**, based on order, customer, product, seller, payment, and review information. This notebook does *not* solve that problem yet — it only builds the data foundation (database + verification) that later modeling tasks will build on.
+
+**Structure of this notebook (matches the task steps):**
+1. **Setup** — imports and locating the raw CSV files
+2. **Step 2 — Download & Ingest** — connect to PostgreSQL and load the CSVs into tables
+3. **Step 3 — Test it** — inspect the schema, run queries, join tables, and sanity-check the data against the business question
+
+---CELL 1 [markdown]---
+## 1. Setup
+
+### Import core libraries
+We import `pandas` (to read the CSVs and later run SQL queries into DataFrames) and `os` (to work with file paths). Printing the pandas version confirms the environment is ready before we touch any data.
+
+---CELL 2 [code]---
+import pandas as pd
+import os
+
+print("Pandas version:", pd.__version__)
+
+---CELL 3 [markdown]---
+### Point to the local dataset folder
+This defines `archive_path`, the local folder where the Olist CSV files (downloaded from Kaggle as described in Step 1 of the task) were extracted. Every later cell that reads a CSV uses this path, so it's set once at the top.
+
+---CELL 4 [code]---
+archive_path = r"C:\Users\HP\Desktop\MLOps\Task1\archive_2"
+
+print("Data path:", archive_path)
+
+---CELL 5 [markdown]---
+###  Discover the CSV files
+Before loading anything, we list every `.csv` file found in `archive_path` and print its size. This is a quick sanity check that the Kaggle download/extraction worked and that we can see all the Olist tables (orders, customers, products, sellers, order items, payments, reviews, etc.) before ingesting them.
+
+---CELL 6 [code]---
+import os
+
+csv_files = [
+    f for f in os.listdir(archive_path)
+    if f.endswith(".csv")
+]
+
+print(f"Found {len(csv_files)} CSV files:")
+print("=" * 70)
+
+for i, file in enumerate(csv_files, 1):
+    file_path = os.path.join(archive_path, file)
+    file_size = os.path.getsize(file_path) / (1024**2)
+
+    print(
+        f"{i}. {file:45} "
+        f"({file_size:8.2f} MB)"
+    )
+
+print("=" * 70)
+
+---CELL 7 [markdown]---
+## 2. Step 2 — Download & Ingest: connect to PostgreSQL
+
+### Configure the database connection
+This sets the PostgreSQL connection parameters (host, port, database name, user, password) and builds a SQLAlchemy `engine`. The engine is the object every later cell uses to talk to the database — for both writing data (`to_sql`) and reading it back (`pd.read_sql_query`).
+
+---CELL 8 [code]---
+from sqlalchemy import create_engine
+
+# PostgreSQL configuration
+DB_HOST = "localhost"
+DB_PORT = "5432"
+DB_NAME = "olist"
+DB_USER = "postgres"
+DB_PASSWORD = "123456"
+
+# Create PostgreSQL connection
+engine = create_engine(
+    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+)
+
+---CELL 9 [markdown]---
+### Test the database connection
+Before loading any data, we confirm PostgreSQL is actually reachable by running `SELECT version();` and printing the result. This is the "Docker + database foundations" check from the task notes — if this cell fails, the Postgres container/service isn't running or the connection settings are wrong, and there's no point continuing.
+
+---CELL 10 [code]---
+from sqlalchemy import text
+
+try:
+    with engine.connect() as connection:
+        result = connection.execute(text("SELECT version();"))
+        version = result.fetchone()[0]
+
+        print("Successfully connected to PostgreSQL!")
+        print("\nPostgreSQL version:")
+        print(version)
+
+except Exception as e:
+    print("❌ Connection failed!")
+    print(e)
+
+---CELL 11 [markdown]---
+### Load every CSV into PostgreSQL as a table
+This is the core ingestion step. For each CSV file found earlier, it:
+1. Derives a clean table name from the filename (e.g. `olist_orders_dataset.csv` → `olist_orders`)
+2. Reads the CSV into a pandas DataFrame
+3. Writes the DataFrame into PostgreSQL with `df.to_sql(..., if_exists="replace")`, creating one table per CSV
+
+After this cell runs, the raw Kaggle data physically lives inside the PostgreSQL database — completing the "database is running locally with the data inside" requirement from the task.
+
+---CELL 12 [code]---
+import pandas as pd
+import os
+
+# Get all CSV files
+csv_files = [
+    f for f in os.listdir(archive_path)
+    if f.endswith(".csv")
+]
+
+print("Loading CSV files into PostgreSQL...")
+print("=" * 80)
+
+table_info = {}
+
+for csv_file in csv_files:
+
+    # Generate table name
+    if "_dataset.csv" in csv_file:
+        table_name = csv_file.replace("_dataset.csv", "")
+    else:
+        table_name = csv_file.replace(".csv", "")
+
+    # Full CSV path
+    file_path = os.path.join(
+        archive_path,
+        csv_file
+    )
+
+    # Read CSV
+    df = pd.read_csv(file_path)
+
+    # Store information
+    table_info[table_name] = len(df)
+
+    # Load DataFrame into PostgreSQL
+    with engine.begin() as connection:
+        connection.execute(
+            text(f'DROP TABLE IF EXISTS "{table_name}" CASCADE')
+        )
+
+    df.to_sql(
+        table_name,
+        engine,
+        if_exists="replace",
+        index=False
+    )
+
+    print(
+        f"Loaded: {csv_file:45} → "
+        f"table: {table_name:35} "
+        f"({len(df):,} rows)"
+    )
+
+print("=" * 80)
+print("All files loaded successfully into PostgreSQL!")
+
+---CELL 13 [markdown]---
+## 3. Step 3 — Test it: inspect the schema and verify the data
+
+### Confirm tables exist and count rows
+Using SQLAlchemy's `inspect`, we list every table now present in the database and run a `COUNT(*)` on each one. This confirms all CSVs were loaded successfully and gives a first feel for the scale of the data (how many orders, customers, products, etc.).
+
+---CELL 14 [code]---
+from sqlalchemy import inspect, text
+
+inspector = inspect(engine)
+
+tables = inspector.get_table_names()
+
+print("Tables in PostgreSQL:")
+print("=" * 70)
+
+total_rows = 0
+
+for table_name in tables:
+
+    with engine.connect() as connection:
+        result = connection.execute(
+            text(f'SELECT COUNT(*) FROM "{table_name}"')
+        )
+
+        count = result.fetchone()[0]
+
+    total_rows += count
+
+    print(
+        f"{table_name:<45} "
+        f"{count:>12,} rows"
+    )
+
+print("=" * 70)
+
+print(
+    f"Database contains {len(tables)} tables "
+    f"and {total_rows:,} total rows."
+)
+
+---CELL 15 [markdown]---
+### Print the full database schema
+For every table, we list its columns and their SQL types (alongside the row count again). This is how we build an understanding of **what each table contains and how the tables relate to each other** — the "understand the tables and how they relate" requirement from Step 1. It's the schema we'll rely on for every join and query below (e.g. spotting that `olist_orders`, `olist_order_items`, `olist_customers`, `olist_products`, `olist_sellers`, and `olist_order_payments` all connect via shared ID columns).
+
+---CELL 16 [code]---
+from sqlalchemy import inspect
+
+inspector = inspect(engine)
+
+print("POSTGRESQL DATABASE SCHEMA")
+print("=" * 80)
+
+tables = inspector.get_table_names()
+
+for table_name in tables:
+
+    columns = inspector.get_columns(table_name)
+
+    with engine.connect() as connection:
+        result = connection.execute(
+            text(f'SELECT COUNT(*) FROM "{table_name}"')
+        )
+
+        row_count = result.fetchone()[0]
+
+    print(f"\n{table_name}")
+    print(
+        f"   Rows: {row_count:,} | "
+        f"Columns: {len(columns)}"
+    )
+
+    print("   " + "-" * 70)
+
+    for i, column in enumerate(columns, 1):
+
+        print(
+            f"   {i}. "
+            f"{column['name']:<40} "
+            f"{str(column['type']):<20}"
+        )
+
+---CELL 17 [markdown]---
+### 3.1 Join tests — one join per key relationship
+
+The next four cells each test a single, specific join between two related tables. Doing them one relationship at a time (rather than one big query) makes it easy to confirm each foreign-key link works correctly before combining everything.
+
+#### Join `orders` ↔ `customers`
+Joins `olist_orders` to `olist_customers` on `customer_id`, pulling in order status/date plus the customer's city and state. This is the most basic relationship in the dataset: every order belongs to exactly one customer.
+
+---CELL 18 [code]---
+query = """
+SELECT 
+    o.order_id,
+    o.order_status,
+    o.order_purchase_timestamp,
+    c.customer_id,
+    c.customer_city,
+    c.customer_state
+FROM olist_orders o
+JOIN olist_customers c 
+    ON o.customer_id = c.customer_id
+LIMIT 5;
+"""
+
+df = pd.read_sql_query(
+    query,
+    engine
+)
+
+print(df.to_string(index=False))
+
+---CELL 19 [markdown]---
+####  Join `orders` ↔ `order_items` ↔ `products`
+A three-table join: an order can have multiple items (`olist_order_items`), and each item references a product (`olist_products`). This verifies the order→item→product chain and surfaces product category, price, and freight value per item.
+
+---CELL 20 [code]---
+query = """
+SELECT 
+    o.order_id,
+    o.order_purchase_timestamp,
+    oi.product_id,
+    p.product_category_name,
+    oi.price,
+    oi.freight_value
+FROM olist_orders o
+JOIN olist_order_items oi 
+    ON o.order_id = oi.order_id
+JOIN olist_products p 
+    ON oi.product_id = p.product_id
+LIMIT 5;
+"""
+
+df = pd.read_sql_query(query, engine)
+
+print(df.to_string(index=False))
+
+---CELL 21 [markdown]---
+#### Join `order_items` ↔ `sellers`
+Joins order items to `olist_sellers` on `seller_id`, showing which seller (and their city/state) fulfilled each item. This confirms the seller-side relationship, which matters for the delivery-time problem since seller location affects shipping distance.
+
+---CELL 22 [code]---
+query = """
+SELECT 
+    oi.order_id,
+    oi.order_item_id,
+    oi.seller_id,
+    s.seller_city,
+    s.seller_state,
+    oi.price
+FROM olist_order_items oi
+JOIN olist_sellers s 
+    ON oi.seller_id = s.seller_id
+LIMIT 5;
+"""
+
+df = pd.read_sql_query(query, engine)
+
+print(df.to_string(index=False))
+
+---CELL 23 [markdown]---
+#### Join `orders` ↔ `order_payments`
+Joins orders to `olist_order_payments` on `order_id`. An order can have multiple payment records (e.g. split payments), so this checks that payment method, value, and installment data can be linked back to a specific order.
+
+---CELL 24 [code]---
+query = """
+SELECT 
+    o.order_id,
+    o.order_purchase_timestamp,
+    op.payment_sequential,
+    op.payment_type,
+    op.payment_value,
+    op.payment_installments
+FROM olist_orders o
+JOIN olist_order_payments op 
+    ON o.order_id = op.order_id
+LIMIT 5;
+"""
+
+df = pd.read_sql_query(query, engine)
+
+print(df.to_string(index=False))
+
+---CELL 25 [markdown]---
+### 3.2 Business/exploratory queries — connecting the data to the actual problem
+
+These next queries go a step further than plain joins: they start answering questions directly tied to the task's business problem (**predicting late vs. on-time delivery**). This is optional "explore if you want" territory per the task notes, but it's useful here to prove we *understand* the problem, not just the schema.
+
+####  Distribution of order statuses
+Counts how many orders fall into each `order_status` (e.g. `delivered`, `shipped`, `canceled`) and their percentage share. This matters because only **delivered** orders have a real delivery date to compare against the estimate — so this defines which subset of the data the late/on-time label can even be computed on.
+
+---CELL 26 [code]---
+query = """
+SELECT 
+    order_status,
+    COUNT(*) AS count,
+    ROUND(
+        100.0 * COUNT(*) / SUM(COUNT(*)) OVER (),
+        2
+    ) AS percentage
+FROM olist_orders
+GROUP BY order_status
+ORDER BY count DESC;
+"""
+
+df = pd.read_sql_query(query, engine)
+
+print(df.to_string(index=False))
+
+---CELL 27 [markdown]---
+####  Overall late vs. on-time delivery rate
+For all `delivered` orders, compares `order_delivered_customer_date` to `order_estimated_delivery_date` to compute how many were late vs. on time, and the overall late percentage. This is essentially a first, single-number look at the target variable for the future prediction task.
+
+---CELL 28 [code]---
+query = """
+SELECT 
+    COUNT(*) AS total_delivered_orders,
+
+    SUM(
+        CASE 
+            WHEN order_delivered_customer_date 
+                 > order_estimated_delivery_date
+            THEN 1 
+            ELSE 0 
+        END
+    ) AS late_deliveries,
+
+    SUM(
+        CASE 
+            WHEN order_delivered_customer_date 
+                 <= order_estimated_delivery_date
+            THEN 1 
+            ELSE 0 
+        END
+    ) AS on_time_deliveries,
+
+    ROUND(
+        100.0 * SUM(
+            CASE 
+                WHEN order_delivered_customer_date 
+                     > order_estimated_delivery_date
+                THEN 1 
+                ELSE 0 
+            END
+        ) / COUNT(*),
+        2
+    ) AS late_percentage
+
+FROM olist_orders
+
+WHERE order_status = 'delivered';
+"""
+
+result = pd.read_sql_query(query, engine)
+
+print(result.to_string(index=False))
+
+---CELL 29 [markdown]---
+####  Late delivery rate by customer state
+Breaks the same late/on-time logic down by `customer_state`, ranking states by late-delivery percentage. This hints at geography as a likely predictive feature (e.g. orders shipped to distant states may run late more often), which is useful context for the modeling task that comes later.
+
+---CELL 30 [code]---
+query = """
+SELECT 
+    c.customer_state,
+    COUNT(*) AS total_orders,
+
+    SUM(
+        CASE 
+            WHEN o.order_delivered_customer_date 
+                 > o.order_estimated_delivery_date
+            THEN 1
+            ELSE 0
+        END
+    ) AS late_orders,
+
+    ROUND(
+        100.0 * SUM(
+            CASE 
+                WHEN o.order_delivered_customer_date 
+                     > o.order_estimated_delivery_date
+                THEN 1
+                ELSE 0
+            END
+        ) / COUNT(*),
+        2
+    ) AS late_percentage
+
+FROM olist_orders o
+
+JOIN olist_customers c
+    ON o.customer_id = c.customer_id
+
+WHERE o.order_status = 'delivered'
+
+GROUP BY c.customer_state
+
+ORDER BY late_percentage DESC
+
+LIMIT 15;
+"""
+
+df = pd.read_sql_query(query, engine)
+
+print(df.to_string(index=False))
+
+---CELL 31 [markdown]---
+#### Draft an "ML-ready" query
+Builds a single wide query that joins `orders`, `customers`, `order_items`, `order_reviews`, and `order_payments` together, aggregates them to one row per order, and computes the `is_late` label alongside features like number of items, total price, freight, number of sellers, average review score, and total payment. This is a preview of the feature table a future modeling notebook would start from — it isn't the modeling step itself, just a proof that all the tables can be combined into one order-level dataset.
+
+---CELL 32 [code]---
+query = """
+SELECT 
+    o.order_id,
+    o.customer_id,
+    c.customer_city,
+    c.customer_state,
+    o.order_purchase_timestamp,
+    o.order_approved_at,
+    o.order_estimated_delivery_date,
+    o.order_delivered_customer_date,
+
+    CASE 
+        WHEN o.order_delivered_customer_date 
+             > o.order_estimated_delivery_date
+        THEN 1 
+        ELSE 0 
+    END AS is_late,
+
+    COUNT(DISTINCT oi.product_id) AS num_items,
+
+    SUM(oi.price) AS total_price,
+
+    SUM(oi.freight_value) AS total_freight,
+
+    COUNT(DISTINCT oi.seller_id) AS num_sellers,
+
+    AVG(orv.review_score) AS avg_review_score,
+
+    SUM(op.payment_value) AS total_payment
+
+FROM olist_orders o
+
+LEFT JOIN olist_customers c
+    ON o.customer_id = c.customer_id
+
+LEFT JOIN olist_order_items oi
+    ON o.order_id = oi.order_id
+
+LEFT JOIN olist_order_reviews orv
+    ON o.order_id = orv.order_id
+
+LEFT JOIN olist_order_payments op
+    ON o.order_id = op.order_id
+
+WHERE o.order_status = 'delivered'
+
+GROUP BY 
+    o.order_id,
+    o.customer_id,
+    c.customer_city,
+    c.customer_state,
+    o.order_purchase_timestamp,
+    o.order_approved_at,
+    o.order_estimated_delivery_date,
+    o.order_delivered_customer_date
+
+LIMIT 10;
+"""
+
+df_ml = pd.read_sql_query(
+    query,
+    engine
+)
+
+print("ML-READY DATASET")
+print("=" * 80)
+
+print(df_ml.to_string(index=False))
+
+print("\nShape:", df_ml.shape)
+
+---CELL 33 [markdown]---
+## 4. Final check — confirming the "Done when" criteria
+
+### Task 1 completion check
+This closing cell re-verifies, in one place, everything the task's "Done when" checklist asks for:
+- **Database is running locally with the data inside** → lists all tables and their row counts
+- **You can query the tables and join them** → re-runs the `orders` ↔ `customers` join and reports the row count
+- **You understand the problem we're trying to solve** → recomputes the overall late vs. on-time delivery split for delivered orders
+
+If this cell runs end-to-end without errors, Task 1 is complete.
+
+---CELL 34 [code]---
+from sqlalchemy import inspect, text
+
+print("=" * 80)
+print("POSTGRESQL TASK 1 COMPLETION CHECK")
+print("=" * 80)
+
+# Get tables
+inspector = inspect(engine)
+tables = inspector.get_table_names()
+
+print(f"\nDatabase contains {len(tables)} tables")
+
+# Row counts
+print("\nTable row counts:")
+
+for table_name in tables:
+
+    with engine.connect() as connection:
+        result = connection.execute(
+            text(f'SELECT COUNT(*) FROM "{table_name}"')
+        )
+
+        count = result.fetchone()[0]
+
+    print(
+        f"   • {table_name:<45} "
+        f"{count:>12,} rows"
+    )
+
+# Test JOIN
+query = """
+SELECT COUNT(*) AS count
+FROM olist_orders o
+JOIN olist_customers c
+    ON o.customer_id = c.customer_id;
+"""
+
+result = pd.read_sql_query(
+    query,
+    engine
+)
+
+print("\nOrders + Customers JOIN:")
+print(
+    f"   {result.iloc[0]['count']:,} rows"
+)
+
+# Prediction problem
+query = """
+SELECT 
+    COUNT(*) AS total,
+
+    SUM(
+        CASE 
+            WHEN order_delivered_customer_date 
+                 > order_estimated_delivery_date
+            THEN 1
+            ELSE 0
+        END
+    ) AS late
+
+FROM olist_orders
+
+WHERE order_status = 'delivered';
+"""
+
+result = pd.read_sql_query(
+    query,
+    engine
+).iloc[0]
+
+total = result["total"]
+late = result["late"]
+
+late_pct = 100 * late / total
+
+print("\n Prediction problem:")
+print(f"   • Delivered orders: {total:,}")
+print(f"   • Late orders: {late:,}")
+print(f"   • Late percentage: {late_pct:.2f}%")
+print(f"   • On-time percentage: {100-late_pct:.2f}%")
+
+print("\n" + "=" * 80)
+print("ALL COMPLETION CRITERIA MET!")
+print("=" * 80)
+
+---CELL 35 [code]---
+import sqlite3
+
+sqlite_conn = sqlite3.connect("olist.db")
+
+for table_name in tables:  # from your inspector.get_table_names()
+    df = pd.read_sql_query(f'SELECT * FROM "{table_name}"', engine)
+    df.to_sql(table_name, sqlite_conn, if_exists="replace", index=False)
+
+sqlite_conn.close()
+print(" olist.db created with all tables")
+

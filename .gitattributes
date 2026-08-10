@@ -1,0 +1,2 @@
+Task1/archive_2/olist_geolocation_dataset.csv filter=lfs diff=lfs merge=lfs -text
+Task1/olist.db filter=lfs diff=lfs merge=lfs -text
