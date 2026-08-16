@@ -1,4 +1,13 @@
-# MLOps Training 2026/2027 — Task 1
+# MLOps-Qafza — Relational Data Ingestion and ML-Ready Delivery Analysis
+
+[![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![SQLite](https://img.shields.io/badge/Export-SQLite-003B57?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
+[![SQL](https://img.shields.io/badge/queries-SQL-4479A1?logo=mysql&logoColor=white)](#database-relationships)
+
+> **MLOps-Qafza** is a reproducible data-foundation project that ingests the Olist Brazilian e-commerce dataset, validates relational integrity, and prepares a leakage-aware target for late-delivery prediction.
+
+This repository represents the first task in an applied MLOps learning path. Its value is not only the notebook output: it documents how raw files become validated relational data and how a business question becomes an ML-ready problem definition.
 
 ## Get the Olist Data into a Database
 
