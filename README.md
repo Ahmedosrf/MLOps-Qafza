@@ -1,40 +1,37 @@
-# MLOps-Qafza — Relational Data Ingestion and ML-Ready Delivery Analysis
+# MLOps-Qafza — From Data Foundations to Production ML
 
 [![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Jupyter](https://img.shields.io/badge/Notebook-Jupyter-F37626?logo=jupyter&logoColor=white)](https://jupyter.org/)
 [![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![SQLite](https://img.shields.io/badge/Export-SQLite-003B57?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
-[![SQL](https://img.shields.io/badge/queries-SQL-4479A1?logo=mysql&logoColor=white)](#database-relationships)
+[![scikit--learn](https://img.shields.io/badge/ML-scikit--learn-F7931E?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
+[![Docker](https://img.shields.io/badge/Container-Docker-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+[![SQL](https://img.shields.io/badge/Queries-SQL-4479A1?logo=mysql&logoColor=white)](#technology-stack)
 
-> **MLOps-Qafza** is a reproducible data-foundation project that ingests the Olist Brazilian e-commerce dataset, validates relational integrity, and prepares a leakage-aware target for late-delivery prediction.
+> **MLOps-Qafza** is an applied MLOps training project that progresses from reliable data foundations to reproducible machine-learning workflows and, eventually, a complete production-ready ML system.
 
-This repository represents the first task in an applied MLOps learning path. Its value is not only the notebook output: it documents how raw files become validated relational data and how a business question becomes an ML-ready problem definition.
+## Project Overview
 
-## Get the Olist Data into a Database
+This repository documents a practical MLOps learning journey based on the Olist Brazilian e-commerce dataset. The project begins with raw relational data and gradually develops into a complete machine-learning and production workflow.
 
-This repository contains **Task 1** from an applied MLOps training project. The goal of this task is to take the Olist Brazilian e-commerce dataset, organize it as a relational database, validate the data model through SQL joins and integrity checks, and prepare a first machine-learning-ready view for studying late deliveries.
+The learning path covers database ingestion, relational validation, leakage-aware machine-learning pipelines, deep learning, production APIs, containerization, data pipelines, data versioning, experiment tracking, distributed training, feature stores, monitoring, continuous retraining, infrastructure as code, and an end-to-end capstone system.
 
-The work moves through a complete data-ingestion workflow: local dataset discovery, PostgreSQL connection, table creation, schema inspection, relationship testing, business-oriented SQL analysis, and SQLite export for convenient local access.
-
-> The main deliverable is a reproducible foundation for the later stages of an end-to-end machine-learning and MLOps pipeline.
-
----
+The repository is organized by task. Each task has its own README containing its objectives, implementation details, execution instructions, outputs, validation results, and limitations.
 
 ## Project Objectives
 
-This task focuses on four practical objectives:
+The project has four complementary objectives:
 
-1. Load the Olist CSV files into PostgreSQL as separate relational tables.
-2. Define and verify primary-key and foreign-key relationships between the tables.
-3. Test the database with representative joins and exploratory business queries.
-4. Create an ML-ready dataset that identifies whether a delivered order arrived late.
+1. Build a reliable foundation for storing and validating real-world data.
+2. Develop reproducible machine-learning workflows that avoid data leakage.
+3. Progress from local experimentation toward production-oriented MLOps practices.
+4. Document every stage clearly enough to support reproducibility, learning, and collaboration.
 
-The notebook also exports the resulting tables to `olist.db`, allowing the data to be inspected locally through SQLite after the PostgreSQL workflow has been completed.
+## Training Roadmap
 
----
+The project is part of a 12-week applied MLOps program. It progresses from local machine-learning foundations to production engineering and concludes with a complete end-to-end system.
 
 ## Weekly Curriculum
-
-The project is part of a 12-week applied MLOps program that progresses from reliable local machine-learning foundations to a complete production-ready system.
 
 | Week | Phase | Dates | Topic | Focus Area |
 |---|---|---|---|---|
@@ -52,214 +49,274 @@ The project is part of a 12-week applied MLOps program that progresses from reli
 | Week 12 | Infrastructure as Code | 5–12 Oct 2026 | Infrastructure | Define reproducible cloud infrastructure using Terraform or Pulumi. |
 | Final | Capstone | 12–19 Oct 2026 | End-to-End ML System | Integrate all components into a complete, production-ready machine-learning system. |
 
-The current repository work corresponds to the data-foundation stage: ingesting the Olist dataset, validating its relational structure, and preparing the data for the modeling and production stages that follow.
+## Current Tasks
 
----
+| Task | Description | Documentation | Status |
+|---|---|---|---|
+| Task 1 | Ingest the Olist data into PostgreSQL and validate its relational structure. | [Task 1 README](./Task1/README.md) | Completed |
+| Task 2 | Build a leakage-aware machine-learning pipeline for late-delivery classification. | [Task 2 README](./Task2/README.md) | Completed |
+| Task 3 | Build a production API and serve the trained model. | [Task 3 README](./Task3/README.md) | Planned |
+| Task 4 | Containerize the application using Docker. | [Task 4 README](./Task4/README.md) | Planned |
+| Task 5 | Build reproducible ETL and data-pipeline workflows. | [Task 5 README](./Task5/README.md) | Planned |
+| Task 6 | Add dataset versioning using DVC. | [Task 6 README](./Task6/README.md) | Planned |
+| Task 7 | Add experiment tracking using MLflow. | [Task 7 README](./Task7/README.md) | Planned |
+| Task 8 | Explore distributed machine learning. | [Task 8 README](./Task8/README.md) | Planned |
+| Task 9 | Add feature-store capabilities. | [Task 9 README](./Task9/README.md) | Planned |
+| Task 10 | Add data and model monitoring. | [Task 10 README](./Task10/README.md) | Planned |
+| Task 11 | Implement continuous retraining. | [Task 11 README](./Task11/README.md) | Planned |
+| Task 12 | Implement infrastructure as code and deployment practices. | [Task 12 README](./Task12/README.md) | Planned |
+
+Task 1 and Task 2 together represent the current **Local Foundations** stage of the training roadmap. The remaining tasks will extend this foundation toward production and platform engineering.
+
+## Problem Definition
+
+The initial machine-learning problem is binary classification of delivery outcomes for delivered orders:
+
+```text
+late = 1      when the actual delivery date is after the estimated delivery date
+on_time = 0   when the actual delivery date is on or before the estimated date
+```
+
+The objective is to identify orders that are likely to be delivered late while avoiding data leakage. The detailed target definition, feature policy, splitting strategy, and evaluation results are documented in [Task 2](./Task2/README.md).
 
 ## Dataset Overview
 
-The project uses the Olist Brazilian e-commerce dataset. It contains information about customers, orders, products, sellers, payments, reviews, shipping-related dates, and product categories.
+The project uses the Olist Brazilian e-commerce dataset. It contains information about customers, orders, products, sellers, payments, reviews, shipping-related dates, product categories, and geographical information.
 
-| Dataset file | Main subject | Typical role in the analysis |
+| Dataset area | Examples | Role |
 |---|---|---|
-| `olist_customers_dataset.csv` | Customers and customer locations | Links orders to customer information |
-| `olist_geolocation_dataset.csv` | Brazilian zip-code geolocation | Supports location-based analysis |
-| `olist_orders_dataset.csv` | Order lifecycle and timestamps | Defines delivery status and dates |
-| `olist_order_items_dataset.csv` | Products included in each order | Connects orders, products, and sellers |
-| `olist_order_payments_dataset.csv` | Payment records | Describes payment methods and values |
-| `olist_order_reviews_dataset.csv` | Customer reviews | Provides review scores and comments metadata |
-| `olist_products_dataset.csv` | Product attributes | Adds product-level information |
-| `olist_sellers_dataset.csv` | Seller records and locations | Connects items to sellers |
-| `product_category_name_translation.csv` | Portuguese-to-English category names | Supports category interpretation |
+| Customers | Customer IDs, cities, states, postal codes | Links orders to customer information |
+| Orders | Statuses and timestamps | Defines the order lifecycle and delivery outcome |
+| Order items | Products, sellers, prices, freight | Describes order contents and commercial value |
+| Payments | Payment methods, values, installments | Describes payment behavior |
+| Reviews | Scores and review metadata | Supports post-order analysis |
+| Products | Categories, weights, dimensions | Adds product-level attributes |
+| Sellers | Seller IDs and locations | Connects items to seller information |
+| Geolocation | Postal codes and coordinates | Supports geographical analysis |
 
-The files are stored under `archive_2/` and are loaded programmatically by the notebook rather than being hard-coded one by one.
+Detailed table definitions, database relationships, and ingestion instructions are documented in [Task 1](./Task1/README.md).
 
----
+## Project Workflow
 
-## Workflow
-
-### 1. Environment and file discovery
-
-The notebook imports the required Python libraries, defines the local dataset path, checks that the expected folder exists, and discovers the available CSV files.
-
-### 2. PostgreSQL ingestion
-
-A SQLAlchemy connection is configured using PostgreSQL connection settings. The notebook tests the connection before loading each CSV file into a PostgreSQL table. This makes the ingestion process easier to repeat when the dataset or database environment changes.
-
-### 3. Schema and data validation
-
-After ingestion, the notebook uses SQLAlchemy inspection to confirm that the tables exist and to report their row counts. It also prints table columns and SQL types so that the database structure can be reviewed before performing analytical queries.
-
-### 4. Relationship and join tests
-
-The notebook checks representative relationships between the main entities, including orders and customers, orders and order items, order items and products, order items and sellers, and orders and payments. These checks help confirm that the relational model can support downstream analysis.
-
-### 5. Business-oriented analysis
-
-The exploratory queries connect the database structure to the target business problem. The analysis includes order-status summaries, delivery-performance calculations, and a breakdown of late deliveries by customer state.
-
-### 6. ML-ready view and SQLite export
-
-The final query focuses on delivered orders and creates a binary `late` indicator. An order is marked as late when its actual delivery date is later than its estimated delivery date. The notebook then exports the PostgreSQL tables to `olist.db` for local SQLite usage.
-
----
-
-## Database Relationships
-
-The relationship definitions are documented in `Relationships.sql`. The main connections are summarized below.
-
-| Child table | Key | Parent table | Relationship |
-|---|---|---|---|
-| `olist_orders` | `customer_id` | `olist_customers` | A customer may have multiple orders |
-| `olist_order_items` | `order_id` | `olist_orders` | An order may contain multiple items |
-| `olist_order_items` | `product_id` | `olist_products` | Each item refers to a product |
-| `olist_order_items` | `seller_id` | `olist_sellers` | Each item refers to a seller |
-| `olist_order_payments` | `order_id` | `olist_orders` | An order may have multiple payment records |
-| `olist_order_reviews` | `order_id` | `olist_orders` | Reviews are associated with orders |
-
-The SQL script also includes checks for primary keys and foreign keys. A foreign key is intentionally not created between `olist_products.product_category_name` and `product_category_name_translation.product_category_name`, because the translation table does not cover every product category present in the product table.
-
----
+```text
+Raw Olist CSV files
+        ↓
+Relational PostgreSQL database
+        ↓
+Schema and relationship validation
+        ↓
+Order-level joined table
+        ↓
+Late-delivery label creation
+        ↓
+Train / validation / test split
+        ↓
+Training-only EDA
+        ↓
+Leakage-safe feature engineering
+        ↓
+Model training and evaluation
+        ↓
+Production API and MLOps stages
+```
 
 ## Technology Stack
 
-| Tool | Purpose |
-|---|---|
-| Python | Data ingestion and analysis |
-| Jupyter Notebook | Interactive and reproducible execution |
-| pandas | Reading CSV files and querying tabular data |
-| SQLAlchemy | PostgreSQL connection and database inspection |
-| PostgreSQL | Relational storage and SQL validation |
-| SQLite | Local export and lightweight database access |
-| SQL | Constraints, joins, validation, and business queries |
-
----
+| Area | Technologies | Purpose |
+|---|---|---|
+| Programming | Python | Data ingestion, analysis, and machine learning |
+| Data processing | pandas, NumPy | Tabular data processing and numerical operations |
+| Interactive analysis | Jupyter Notebook | Reproducible, cell-based development |
+| Relational database | PostgreSQL | Primary relational data storage |
+| Database access | SQLAlchemy, psycopg2 | Database connections and inspection |
+| Query language | SQL | Joins, constraints, validation, and analysis |
+| Local export | SQLite | Lightweight local inspection |
+| Machine learning | scikit-learn | Feature processing, modeling, and evaluation |
+| Data formats | CSV, Parquet, NumPy arrays | Input and intermediate data storage |
+| APIs | FastAPI or Flask | Future model serving |
+| Containers | Docker | Reproducible runtime environments |
+| Data versioning | DVC | Versioning datasets and data pipelines |
+| Experiment tracking | MLflow | Tracking parameters, metrics, models, and artifacts |
+| Monitoring | Prometheus, Grafana, Evidently AI | Monitoring data and model behavior |
+| Infrastructure | Terraform or Pulumi | Reproducible infrastructure definition |
 
 ## Repository Structure
 
 ```text
-Task1/
-├── Task01.ipynb
-├── Relationships.sql
-├── olist.db
-└── archive_2/
-    ├── olist_customers_dataset.csv
-    ├── olist_geolocation_dataset.csv
-    ├── olist_order_items_dataset.csv
-    ├── olist_order_payments_dataset.csv
-    ├── olist_order_reviews_dataset.csv
-    ├── olist_orders_dataset.csv
-    ├── olist_products_dataset.csv
-    ├── olist_sellers_dataset.csv
-    └── product_category_name_translation.csv
+MLOps-Qafza/
+├── README.md                              ← General project overview and roadmap
+├── .gitignore                             ← Ignored local, generated, and sensitive files
+├── .gitattributes                          ← Git file-handling configuration
+│
+├── Task1/
+│   ├── README.md                          ← Task 1 documentation
+│   ├── notebooks/
+│   │   └── Task01.ipynb                   ← Database ingestion and validation notebook
+│   ├── sql/
+│   │   └── Relationships.sql              ← Database relationships and integrity checks
+│   ├── data/                               ← Local Olist CSV files; normally not committed
+│   ├── database/
+│   │   └── olist.db                        ← Local SQLite export; normally not committed
+│   └── docs/
+│       └── notebook_summary.txt            ← Supporting notebook summary
+│
+├── Task2/
+│   ├── README.md                          ← Task 2 documentation
+│   ├── notebooks/
+│   │   ├── 01_read_and_join_tables.ipynb
+│   │   ├── 02_create_labels.ipynb
+│   │   ├── 03_split_data.ipynb
+│   │   ├── 04_eda.ipynb
+│   │   ├── 05_feature_engineering.ipynb
+│   │   └── 06_train_tune_evaluate.ipynb
+│   └── artifacts/                          ← Generated outputs; normally not committed
+│       ├── tables/
+│       ├── features/
+│       ├── reports/
+│       ├── charts/
+│       └── models/
+│
+├── Task3/                                  ← Future production API task
+│   └── README.md
+├── Task4/                                  ← Future Docker task
+│   └── README.md
+├── Task5/                                  ← Future ETL task
+│   └── README.md
+├── Task6/                                  ← Future data-versioning task
+│   └── README.md
+├── Task7/                                  ← Future experiment-tracking task
+│   └── README.md
+├── Task8/                                  ← Future distributed-training task
+│   └── README.md
+├── Task9/                                  ← Future feature-store task
+│   └── README.md
+├── Task10/                                 ← Future monitoring task
+│   └── README.md
+├── Task11/                                 ← Future continuous-retraining task
+│   └── README.md
+├── Task12/                                 ← Future infrastructure-as-code task
+│   └── README.md
+└── docs/                                   ← Optional repository-wide documentation
 ```
 
-`Task01.ipynb` contains the complete ingestion and validation workflow. `Relationships.sql` contains the relational constraints and verification queries. `olist.db` is the generated SQLite copy, while `archive_2/` contains the source CSV files.
+The root README provides the project map. Each task README provides the detailed documentation for that task. This separation keeps the repository readable while preserving the full history and technical details of every stage.
 
----
+## Task Documentation Map
+
+| Documentation file | Scope |
+|---|---|
+| `README.md` | Project-wide overview, curriculum, roadmap, status, and navigation |
+| `Task1/README.md` | PostgreSQL ingestion, relational validation, SQL relationships, and database execution |
+| `Task2/README.md` | Labels, data splitting, EDA, feature engineering, model training, and evaluation |
+| `TaskN/README.md` | Detailed documentation for each future task |
+
+## Reproducibility Principles
+
+Each task is separated into clear stages with documented inputs and outputs. Data ingestion, target creation, splitting, EDA, feature engineering, model training, and evaluation should not be mixed into one unstructured notebook.
+
+The project should be reproducible from a clean environment whenever possible. Paths should be configurable, generated outputs should be clearly named, and each stage should record the assumptions and validation results that support it.
+
+## Security and Data Management
+
+Database credentials must be supplied through environment variables or a local configuration file excluded by `.gitignore`. Passwords, API keys, private connection strings, and personal credentials must never be committed to GitHub.
+
+Large raw datasets, local database files, generated model files, and temporary artifacts should normally remain outside version control unless the training requirements explicitly request them. The README files document the expected paths even when the actual data is kept locally.
+
+## Current Progress
+
+### Task 1 — Completed
+
+Task 1 established the relational data foundation by loading the Olist dataset into PostgreSQL, validating the schema and joins, testing database relationships, and defining the late-delivery problem.
+
+The task includes a complete notebook, a SQL relationship script, a local SQLite export, and documentation of the database workflow.
+
+### Task 2 — Completed
+
+Task 2 extended the foundation into a reproducible machine-learning pipeline. It creates the `is_late` target, uses a temporal train/validation/test split, performs EDA on training data, builds leakage-aware features, trains a baseline and classifier, and evaluates the result using multiple metrics rather than accuracy alone.
+
+The Task 2 pipeline stores intermediate outputs in separate artifact categories: tables, features, reports, charts, and models.
+
+## Validation Philosophy
+
+The project does not treat accuracy as the only indicator of model quality. Because late deliveries represent a smaller class, evaluation should consider recall, precision, F1-score, ROC-AUC or PR-AUC, and the confusion matrix.
+
+A model that detects nearly every late order but produces too many false alarms is not equivalent to a model that provides balanced and operationally useful predictions. The evaluation objective must therefore be connected to the actual business cost of missed late orders and unnecessary alerts.
+
+## Future Roadmap
+
+The next stages will extend the local workflow toward deep learning, production APIs, Docker, ETL orchestration, data versioning, experiment tracking, distributed training, feature stores, monitoring, automated retraining, infrastructure as code, and the final capstone system.
+
+The intended long-term workflow is:
+
+```text
+Reliable data foundation
+        ↓
+Reproducible ML pipeline
+        ↓
+Deep learning extensions
+        ↓
+Production API
+        ↓
+Containerized service
+        ↓
+Versioned data and experiments
+        ↓
+Monitoring and automated retraining
+        ↓
+Infrastructure as code
+        ↓
+End-to-end production ML system
+```
 
 ## Prerequisites
 
-Before running the notebook, make sure the following are available:
+The exact prerequisites depend on the task, but the foundation currently uses:
 
 | Requirement | Purpose |
 |---|---|
-| Python 3.9 or newer | Runs the notebook code |
-| Jupyter Notebook or JupyterLab | Executes `Task01.ipynb` |
-| PostgreSQL | Stores the ingested tables |
-| PostgreSQL credentials | Allows the notebook to connect to the database |
-| Python packages | Supports data loading and SQL access |
+| Python 3.9 or newer | Runs the data and machine-learning code |
+| Jupyter Notebook or JupyterLab | Executes the notebooks |
+| PostgreSQL | Stores the relational Olist tables |
+| PostgreSQL credentials | Allows local database access |
+| pandas and NumPy | Data manipulation and numerical processing |
+| SQLAlchemy and psycopg2-binary | PostgreSQL connectivity |
+| pyarrow | Reading and writing Parquet files |
+| scikit-learn | Feature processing and machine learning |
 
-The notebook expects the dataset folder to be available at the path assigned to `archive_path`. If the project is moved to another computer, update that path before execution.
-
-A typical environment can be prepared with:
-
-```bash
-pip install pandas sqlalchemy psycopg2-binary jupyter
-```
-
-If the notebook uses additional packages in the local environment, install those packages before running all cells.
-
----
-
-## How to Run the Project
-
-### 1. Open the project directory
+A typical foundation environment can be prepared with:
 
 ```bash
-cd Task1
+pip install pandas numpy sqlalchemy psycopg2-binary pyarrow scikit-learn jupyter
 ```
 
-### 2. Start Jupyter
+Task-specific prerequisites and execution commands are documented in the relevant task README.
 
-```bash
-jupyter notebook
-```
+## How to Navigate the Repository
 
-Open `Task01.ipynb` from the Jupyter interface.
+Start with this README to understand the overall roadmap and current progress. Then open the README for the task you want to study or execute.
 
-### 3. Configure PostgreSQL
-
-Update the database host, port, database name, username, and password in the connection-configuration cell. Confirm that the PostgreSQL server is running and that the selected database is accessible.
-
-### 4. Set the dataset path
-
-Point `archive_path` to the directory containing the nine Olist CSV files. The notebook will discover the files and load them into PostgreSQL.
-
-### 5. Execute the notebook in order
-
-Run the cells from top to bottom. The recommended sequence is setup, PostgreSQL connection, ingestion, schema inspection, join tests, business queries, ML-ready query, and SQLite export.
-
-### 6. Apply the relationship script when required
-
-After the tables have been loaded, run `Relationships.sql` in the target PostgreSQL database to define and verify the documented constraints. Review the verification queries before applying them to a production database.
-
----
-
-## Validation Results
-
-The notebook includes a final completion check for the ingested database. In the recorded run, the database contained nine tables and the delivery analysis returned the following results:
-
-| Metric | Recorded value |
-|---|---:|
-| Delivered orders | 96,478 |
-| Late deliveries | 7,826 |
-| On-time deliveries | 88,644 |
-| Late-delivery rate | 8.11% |
-
-These values describe the execution captured in the notebook and may change if the source data, filtering conditions, or query logic is modified.
-
----
-
-## ML-Ready Problem Definition
-
-The first machine-learning-oriented target is a binary delivery label for delivered orders:
+For the current implementation, use the following order:
 
 ```text
-late = 1  when order_delivered_customer_date > order_estimated_delivery_date
-late = 0  otherwise
+1. Read Task1/README.md
+2. Run Task 1 if the PostgreSQL foundation is not available
+3. Read Task2/README.md
+4. Run the Task 2 notebooks in numeric order
+5. Review the generated reports, charts, metrics, and model artifacts
 ```
 
-The current notebook prepares the target and validates the underlying dates. Future tasks can extend this view with features available before delivery, such as purchase timing, customer location, seller location, item count, product information, payment details, and shipping-related variables.
+## Contribution and Working Conventions
 
-Care should be taken to avoid data leakage. Variables that are only known after delivery should not be used as predictive features for a model intended to estimate delivery risk before the order is completed.
+New tasks should be added as separate directories with their own README. Each task README should explain its purpose, structure, prerequisites, execution order, inputs, outputs, validation checks, and limitations.
 
----
+Generated files should be kept separate from source code. Notebook names should use numeric prefixes when execution order matters. Commit messages should describe the change clearly, and sensitive or machine-specific files should remain excluded from version control.
 
-## Notes and Limitations
+## Data Attribution
 
-The notebook is designed as a training task for database ingestion and validation, not as a complete production deployment. Database credentials should not be committed to GitHub; use environment variables or a local configuration file excluded through `.gitignore`.
+The Olist dataset should be used and redistributed according to the terms and attribution requirements of its original source. Review the original dataset page and license information before redistributing the raw data or using it outside the intended training context.
 
-The generated `olist.db` file is useful for local inspection, but PostgreSQL remains the primary relational database used by the ingestion workflow. When reproducing the project on another machine, the dataset path and database connection settings must be adapted to that environment.
+## License and Disclaimer
 
----
+This repository is an educational MLOps training project. The code and workflows are intended for learning, experimentation, and reproducibility practice. They should be reviewed and adapted before being used in a production environment.
 
-## Next Steps
-
-The natural continuation of this project is to build a reusable data-preparation pipeline, engineer leakage-safe delivery features, train and evaluate a binary classification model, track experiments, and expose the model through a reproducible inference workflow. These stages can then be connected to testing, packaging, monitoring, and deployment practices expected in an MLOps project.
-
----
-
-## License and Data Attribution
-
-This README documents the implementation contained in this repository. Review the terms and attribution requirements of the original Olist dataset before redistributing the data or using it outside the intended training context.
+The recorded metrics and validation results describe the execution captured in the project. They may change if the source data, filtering rules, feature policy, split strategy, or model configuration changes.

@@ -658,3 +658,4 @@ for table_name in tables:  # from your inspector.get_table_names()
 sqlite_conn.close()
 print(" olist.db created with all tables")
 
+
