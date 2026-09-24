@@ -13,6 +13,10 @@ Task1/
 ├── data/                          # Raw Olist CSV files
 ├── database/
 │   └── olist.db                  # Local SQLite copy of the loaded tables
+├── src/
+│   ├── __init__.py
+│   └── config.py                  # Reusable paths and database settings
+├── .env.example                   # Safe configuration template
 ├── README.md
 └── docs/
     └── notebook_summary.txt      # Extracted notebook summary and cell reference
@@ -30,13 +34,13 @@ Run `notebooks/Task01.ipynb` from top to bottom. It performs the following steps
 6. Calculates the delivered, late, and on-time order summary.
 7. Runs the final Task 1 completion check.
 
-The notebook reads raw CSV files from `data/` and expects the PostgreSQL database `olist` to be available on `localhost:5432` with the default user `postgres`. Set the password without writing it into the notebook:
+The notebook reads raw CSV files from the configured data directory and expects the PostgreSQL database `olist` to be available on `localhost:5432` with the default user `postgres`. Paths and connection settings are loaded through `src/config.py`, so the notebook does not depend on a fixed computer path or a password embedded in source code. Set the password without writing it into the notebook:
 
 ```powershell
 $env:OLIST_DB_PASSWORD = "your_password"
 ```
 
-Optional connection variables are `OLIST_DB_HOST`, `OLIST_DB_PORT`, `OLIST_DB_NAME`, and `OLIST_DB_USER`.
+Optional variables are `MLOPS_PROJECT_ROOT`, `OLIST_DATA_DIR`, `OLIST_DB_HOST`, `OLIST_DB_PORT`, `OLIST_DB_NAME`, and `OLIST_DB_USER`. See `.env.example` for the names and default values. The real `.env` file must remain local.
 
 ## Relationships
 

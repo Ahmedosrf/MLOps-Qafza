@@ -1,0 +1,9 @@
+-r requirements.txt
+
+pytest==8.3.4
+pytest-cov==6.0.0
+httpx==0.28.1
+ruff==0.9.10
+black==25.1.0
+pre-commit==4.1.0
+dvc==3.59.1

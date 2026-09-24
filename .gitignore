@@ -15,9 +15,16 @@ venv/
 # Task 1 local data and databases
 Task1/data/
 Task1/database/
+Task1/.env
 
 # Task 2 generated artifacts
 Task2/artifacts/
+
+# Task 3 local secrets, logs, and generated model copies
+Task3/.env
+Task3/logs/
+Task3/models/*.joblib
+Task3/verification/
 
 # Local databases and generated data
 *.db
@@ -27,6 +34,8 @@ Task2/artifacts/
 *.npz
 *.npy
 *.joblib
+.dvc/cache/
+mlruns/
 
 # Editor and operating-system files
 .vscode/settings.json

@@ -55,7 +55,7 @@ The project is part of a 12-week applied MLOps program. It progresses from local
 |---|---|---|---|
 | Task 1 | Ingest the Olist data into PostgreSQL and validate its relational structure. | [Task 1 README](./Task1/README.md) | Completed |
 | Task 2 | Build a leakage-aware machine-learning pipeline for late-delivery classification. | [Task 2 README](./Task2/README.md) | Completed |
-| Task 3 | Build a production API and serve the trained model. | [Task 3 README](./Task3/README.md) | Planned |
+| Task 3 | Build a production API, containerize the inference stack, and add production foundations. | [Task 3 README](./Task3/README.md) | Completed |
 | Task 4 | Containerize the application using Docker. | [Task 4 README](./Task4/README.md) | Planned |
 | Task 5 | Build reproducible ETL and data-pipeline workflows. | [Task 5 README](./Task5/README.md) | Planned |
 | Task 6 | Add dataset versioning using DVC. | [Task 6 README](./Task6/README.md) | Planned |
@@ -133,7 +133,7 @@ Production API and MLOps stages
 | Local export | SQLite | Lightweight local inspection |
 | Machine learning | scikit-learn | Feature processing, modeling, and evaluation |
 | Data formats | CSV, Parquet, NumPy arrays | Input and intermediate data storage |
-| APIs | FastAPI or Flask | Future model serving |
+| APIs | FastAPI, Pydantic, Uvicorn | Typed model-serving API and request validation |
 | Containers | Docker | Reproducible runtime environments |
 | Data versioning | DVC | Versioning datasets and data pipelines |
 | Experiment tracking | MLflow | Tracking parameters, metrics, models, and artifacts |
@@ -154,6 +154,8 @@ MLOps-Qafza/
 │   │   └── Task01.ipynb                   ← Database ingestion and validation notebook
 │   ├── sql/
 │   │   └── Relationships.sql              ← Database relationships and integrity checks
+│   ├── src/
+│   │   └── config.py                       ← Portable data and database configuration
 │   ├── data/                               ← Local Olist CSV files; normally not committed
 │   ├── database/
 │   │   └── olist.db                        ← Local SQLite export; normally not committed
@@ -169,6 +171,8 @@ MLOps-Qafza/
 │   │   ├── 04_eda.ipynb
 │   │   ├── 05_feature_engineering.ipynb
 │   │   └── 06_train_tune_evaluate.ipynb
+│   ├── src/
+│   │   └── config.py                       ← Portable project-root configuration
 │   └── artifacts/                          ← Generated outputs; normally not committed
 │       ├── tables/
 │       ├── features/
@@ -176,8 +180,23 @@ MLOps-Qafza/
 │       ├── charts/
 │       └── models/
 │
-├── Task3/                                  ← Future production API task
-│   └── README.md
+├── Task3/                                  ← Production inference and API task
+│   ├── README.md
+│   ├── app/
+│   ├── config/
+│   ├── data/
+│   ├── models/
+│   ├── notebooks/
+│   ├── src/
+│   ├── tests/
+│   ├── .env.example
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   ├── pyproject.toml
+│   ├── requirements.txt
+│   └── requirements-dev.txt
+├── .dockerignore                           ← Docker build-context exclusions
+├── .github/workflows/ci.yml                 ← Automated Task 3 tests
 ├── Task4/                                  ← Future Docker task
 │   └── README.md
 ├── Task5/                                  ← Future ETL task
@@ -226,13 +245,13 @@ Large raw datasets, local database files, generated model files, and temporary a
 
 ### Task 1 — Completed
 
-Task 1 established the relational data foundation by loading the Olist dataset into PostgreSQL, validating the schema and joins, testing database relationships, and defining the late-delivery problem.
+Task 1 established the relational data foundation by loading the Olist dataset into PostgreSQL, validating the schema and joins, testing database relationships, and defining the late-delivery problem. Its notebook now reads paths and database settings from reusable configuration instead of relying on a fixed local path or an embedded password.
 
 The task includes a complete notebook, a SQL relationship script, a local SQLite export, and documentation of the database workflow.
 
 ### Task 2 — Completed
 
-Task 2 extended the foundation into a reproducible machine-learning pipeline. It creates the `is_late` target, uses a temporal train/validation/test split, performs EDA on training data, builds leakage-aware features, trains a baseline and classifier, and evaluates the result using multiple metrics rather than accuracy alone.
+Task 2 extended the foundation into a reproducible machine-learning pipeline. It creates the `is_late` target, uses a temporal train/validation/test split, performs EDA on training data, builds leakage-aware features, trains a baseline and classifier, and evaluates the result using multiple metrics rather than accuracy alone. It also produces a versioned inference handoff containing the fitted preprocessor, feature list, selected threshold, model, and model metadata for Task 3.
 
 The Task 2 pipeline stores intermediate outputs in separate artifact categories: tables, features, reports, charts, and models.
 

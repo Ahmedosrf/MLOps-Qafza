@@ -1,0 +1,7 @@
+stages:
+  inference_bundle:
+    cmd: python -m Task3.src.model_registry_export
+    deps:
+      - Task2/artifacts/models/06_inference_bundle.joblib
+    outs:
+      - Task3/models/06_inference_bundle.joblib

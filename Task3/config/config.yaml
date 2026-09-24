@@ -1,0 +1,18 @@
+# Non-secret defaults for the Task 3 inference service.
+# Environment variables may override these values in later application modules.
+application:
+  name: olist-late-delivery-api
+  environment: development
+  log_level: INFO
+
+model:
+  bundle_path: Task2/artifacts/models/06_inference_bundle.joblib
+  expected_version: task2-v1
+
+validation:
+  reject_invalid_requests: true
+  max_batch_size: 100
+
+logging:
+  file_path: Task3/logs/app.log
+  include_request_payload: false

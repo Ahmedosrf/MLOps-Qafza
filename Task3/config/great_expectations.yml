@@ -1,0 +1,26 @@
+expectation_suite_name: olist_prediction_input
+required_columns:
+  - order_purchase_timestamp
+  - order_estimated_delivery_date
+  - order_approved_at
+  - customer_zip_code_prefix
+  - customer_city
+  - customer_state
+  - num_items
+  - num_distinct_products
+  - total_price
+  - total_freight
+  - num_sellers
+  - num_product_categories
+  - avg_product_weight_g
+  - avg_product_photos_qty
+  - seller_state_count
+  - payment_record_count
+  - total_payment_value
+  - max_payment_installments
+  - seller_state
+rules:
+  state_code_length: 2
+  non_negative_numeric: true
+  positive_count_fields: true
+  missing_values_allowed: false
