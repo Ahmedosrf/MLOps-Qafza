@@ -37,10 +37,24 @@ jobs:
     name: Build API image
     runs-on: ubuntu-latest
     needs: quality-and-tests
-    if: hashFiles('Task2/artifacts/models/06_inference_bundle.joblib') != ''
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Build Docker image
+      - name: Check for local model bundle
+        id: model
+        shell: bash
+        run: |
+          if [ -f Task2/artifacts/models/06_inference_bundle.joblib ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build Docker image when the model bundle is available
+        if: steps.model.outputs.available == 'true'
         run: docker build -f Task3/Dockerfile -t olist-late-delivery-api:ci .
+
+      - name: Explain skipped Docker build
+        if: steps.model.outputs.available != 'true'
+        run: echo "Docker build skipped because the private model bundle is not in Git."

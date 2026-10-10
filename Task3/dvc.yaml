@@ -1,7 +1,7 @@
 stages:
   inference_bundle:
-    cmd: python -m Task3.src.model_registry_export
+    cmd: python -c "import os; os.environ['DVC_MODEL_PATH']='models/06_inference_bundle.joblib'; from src.model_registry_export import export_bundle; export_bundle()"
     deps:
-      - Task2/artifacts/models/06_inference_bundle.joblib
+      - ../Task2/artifacts/models/06_inference_bundle.joblib
     outs:
-      - Task3/models/06_inference_bundle.joblib
+      - models/06_inference_bundle.joblib
