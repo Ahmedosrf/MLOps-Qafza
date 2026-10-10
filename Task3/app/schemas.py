@@ -27,7 +27,7 @@ class ModelInfoResponse(BaseModel):
 class OrderPayload(BaseModel):
     """Validated prediction-time fields plus permitted Task 2 extra features."""
 
-    model_config = {"extra": "allow"}
+    model_config = {"extra": "forbid"}
 
     order_purchase_timestamp: str
     order_estimated_delivery_date: str
@@ -35,6 +35,7 @@ class OrderPayload(BaseModel):
     customer_zip_code_prefix: int = Field(ge=0)
     customer_city: str
     customer_state: str
+    seller_state: str
     num_items: int = Field(gt=0)
     num_distinct_products: int = Field(gt=0)
     total_price: float = Field(ge=0)

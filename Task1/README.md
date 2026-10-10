@@ -42,6 +42,23 @@ $env:OLIST_DB_PASSWORD = "your_password"
 
 Optional variables are `MLOPS_PROJECT_ROOT`, `OLIST_DATA_DIR`, `OLIST_DB_HOST`, `OLIST_DB_PORT`, `OLIST_DB_NAME`, and `OLIST_DB_USER`. See `.env.example` for the names and default values. The real `.env` file must remain local.
 
+### Start PostgreSQL with Docker (optional)
+
+From the repository root, the included `Task1/docker-compose.yml` starts a local PostgreSQL instance for the notebook:
+
+```powershell
+docker compose -f Task1/docker-compose.yml up -d
+$env:OLIST_DB_PASSWORD = "postgres"
+```
+
+Run the notebook from the repository root, then stop the database when finished:
+
+```powershell
+docker compose -f Task1/docker-compose.yml down
+```
+
+The CSV data is intentionally not committed. Download the official Olist dataset and place its CSV files under `Task1/data/` before running the notebook.
+
 ## Relationships
 
 After the raw tables have been loaded and verified, `sql/Relationships.sql` may be executed in PostgreSQL to add primary keys and foreign keys. The category translation table is intentionally not assigned a foreign key because it does not contain every product category found in the products table.

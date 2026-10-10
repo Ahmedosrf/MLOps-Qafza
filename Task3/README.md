@@ -1,6 +1,6 @@
 # Task 3 — From Notebooks to Production
 
-Task 3 converts the trained Olist late-delivery pipeline into a reproducible inference service. Training remains in Task 2 for this stage. The production code will load the fitted model bundle and preprocessor, validate new orders, expose predictions through FastAPI, and later add tests, containers, CI/CD, artifact tracking, and monitoring.
+Task 3 converts the trained Olist late-delivery pipeline into a reproducible inference service. Training remains in Task 2. The service loads the fitted model bundle and preprocessor, validates new orders, exposes predictions through FastAPI, and provides tests, containers, CI/CD, artifact tracking, and monitoring foundations without retraining.
 
 ## Current stage
 
@@ -49,7 +49,7 @@ The bundle contains the fitted classifier, fitted preprocessor, feature names, t
 
 ## Prediction request contract
 
-`POST /predict` requires the complete order-level feature set used by Task 2. In addition to purchase and delivery-estimate timestamps, each request must provide customer location, item and product counts, price and freight totals, product aggregates, seller aggregates, and payment aggregates. The required fields are `customer_zip_code_prefix`, `customer_city`, `customer_state`, `num_items`, `num_distinct_products`, `total_price`, `total_freight`, `num_sellers`, `num_product_categories`, `avg_product_weight_g`, `avg_product_photos_qty`, `seller_state_count`, `payment_record_count`, `total_payment_value`, and `max_payment_installments`. This prevents a request with only a few convenient fields from reaching the fitted preprocessor with missing columns.
+`POST /predict` requires the complete order-level feature set used by Task 2. In addition to purchase and delivery-estimate timestamps, each request must provide customer location, item and product counts, price and freight totals, product aggregates, seller aggregates, and payment aggregates. The required fields are `customer_zip_code_prefix`, `customer_city`, `customer_state`, `seller_state`, `num_items`, `num_distinct_products`, `total_price`, `total_freight`, `num_sellers`, `num_product_categories`, `avg_product_weight_g`, `avg_product_photos_qty`, `seller_state_count`, `payment_record_count`, `total_payment_value`, and `max_payment_installments`. This prevents a request with only a few convenient fields from reaching the fitted preprocessor with missing columns.
 
 The API does not invent these aggregates. A future client or upstream data-preparation step must calculate them from the same order-level tables and aggregation rules used in Task 2 Notebook 1. Post-delivery fields and review information remain prohibited. The seller location fields include both `seller_state` (the representative seller state) and `seller_state_count` (the number of distinct seller states); both are required by the fitted preprocessor.
 
@@ -58,6 +58,8 @@ The API does not invent these aggregates. A future client or upstream data-prepa
 Machine-specific paths, credentials, and thresholds must not be embedded in application code. Runtime values are read from environment variables or `config/config.yaml`. Secrets belong in a local `.env` file, which is ignored by Git. `.env.example` documents variable names without containing real credentials.
 
 ## Verification
+
+The local verification completed successfully with Ruff, Black, and 22 Pytest tests. Docker Compose was also verified with FastAPI, PostgreSQL, MLflow, and MinIO running together; `/health`, `/model/info`, `/predict`, and `/metrics` returned successfully. GitHub Actions validates the code and tests on every push. The Docker build step is skipped in GitHub Actions when the private model bundle is absent from the checkout.
 
 ## Environment requirement
 
@@ -112,7 +114,7 @@ cd C:\Users\HP\Desktop\MLOps\Task3
 docker-compose up --build
 ```
 
-The Compose stack contains the API, MLflow tracking server, PostgreSQL backend, MinIO artifact storage, and persistent API logs. The API image still copies the current Task 2 bundle from the local artifact path for the reproducible handoff; `src/model_registry_export.py` logs the same fitted bundle to MLflow without refitting. Raw CSV files and generated reports remain excluded from the image.
+The Compose stack contains the API, MLflow tracking server, PostgreSQL backend, MinIO artifact storage, and API logs. The API image copies the current Task 2 bundle from the local artifact path; `src/model_registry_export.py` logs the same fitted bundle to MLflow without refitting. Raw CSV files and generated reports remain excluded from the image. For a clean clone, provide the bundle through DVC or another artifact store before building the API image.
 
 ## Continuous integration
 
@@ -120,7 +122,7 @@ The repository workflow at `.github/workflows/ci.yml` runs Ruff, Black, and the 
 
 ## Data validation and versioning
 
-`src/validation.py` rejects missing columns, null values, negative numeric values, invalid counts, malformed state codes, and invalid dates before the model is called. `src/gx_validator.py` runs the same contract through Great Expectations. The expectation definitions are documented in `config/great_expectations.yml`. DVC metadata is initialized at the repository root, and `Task3/dvc.yaml` describes the handoff stage that copies the Task 2 bundle into a versionable Task 3 model path. Configure a remote with `dvc remote add` before pushing the model cache to shared storage.
+`src/validation.py` rejects missing columns, null values, negative numeric values, invalid counts, malformed state codes, and invalid dates before the model is called. `OrderPayload` explicitly requires `seller_state` and rejects undeclared fields. `src/gx_validator.py` runs the same contract through Great Expectations. The expectation definitions are documented in `config/great_expectations.yml`. DVC metadata is initialized at the repository root, and `Task3/dvc.yaml` describes the handoff stage that copies the Task 2 bundle into a versionable Task 3 model path. Configure a remote with `dvc remote add` before pushing the model cache to shared storage.
 
 ## MLflow and artifact storage
 

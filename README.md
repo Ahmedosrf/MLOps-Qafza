@@ -1,6 +1,6 @@
 # MLOps-Qafza — From Data Foundations to Production ML
 
-[![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.11--3.13-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Jupyter](https://img.shields.io/badge/Notebook-Jupyter-F37626?logo=jupyter&logoColor=white)](https://jupyter.org/)
 [![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![SQLite](https://img.shields.io/badge/Export-SQLite-003B57?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
@@ -56,7 +56,7 @@ The project is part of a 12-week applied MLOps program. It progresses from local
 | Task 1 | Ingest the Olist data into PostgreSQL and validate its relational structure. | [Task 1 README](./Task1/README.md) | Completed |
 | Task 2 | Build a leakage-aware machine-learning pipeline for late-delivery classification. | [Task 2 README](./Task2/README.md) | Completed |
 | Task 3 | Build a production API, containerize the inference stack, and add production foundations. | [Task 3 README](./Task3/README.md) | Completed |
-| Task 4 | Containerize the application using Docker. | [Task 4 README](./Task4/README.md) | Planned |
+| Task 4 | Containerize the application using Docker. | [Task 4 README](./Task4/README.md) | Planned / foundations in Task 3 |
 | Task 5 | Build reproducible ETL and data-pipeline workflows. | [Task 5 README](./Task5/README.md) | Planned |
 | Task 6 | Add dataset versioning using DVC. | [Task 6 README](./Task6/README.md) | Planned |
 | Task 7 | Add experiment tracking using MLflow. | [Task 7 README](./Task7/README.md) | Planned |
@@ -66,7 +66,7 @@ The project is part of a 12-week applied MLOps program. It progresses from local
 | Task 11 | Implement continuous retraining. | [Task 11 README](./Task11/README.md) | Planned |
 | Task 12 | Implement infrastructure as code and deployment practices. | [Task 12 README](./Task12/README.md) | Planned |
 
-Task 1 and Task 2 together represent the current **Local Foundations** stage of the training roadmap. The remaining tasks will extend this foundation toward production and platform engineering.
+Task 1 and Task 2 represent the **Local Foundations** stage. Task 3 adds the first production-oriented inference service, container stack, artifact handoff, validation, observability, and CI foundations.
 
 ## Problem Definition
 
@@ -150,6 +150,7 @@ MLOps-Qafza/
 │
 ├── Task1/
 │   ├── README.md                          ← Task 1 documentation
+│   ├── docker-compose.yml                  ← Optional local PostgreSQL service
 │   ├── notebooks/
 │   │   └── Task01.ipynb                   ← Database ingestion and validation notebook
 │   ├── sql/
@@ -227,6 +228,7 @@ The root README provides the project map. Each task README provides the detailed
 | `README.md` | Project-wide overview, curriculum, roadmap, status, and navigation |
 | `Task1/README.md` | PostgreSQL ingestion, relational validation, SQL relationships, and database execution |
 | `Task2/README.md` | Labels, data splitting, EDA, feature engineering, model training, and evaluation |
+| `Task3/README.md` | FastAPI inference, Docker Compose, MLflow, DVC, validation, metrics, and CI |
 | `TaskN/README.md` | Detailed documentation for each future task |
 
 ## Reproducibility Principles
@@ -255,6 +257,10 @@ Task 2 extended the foundation into a reproducible machine-learning pipeline. It
 
 The Task 2 pipeline stores intermediate outputs in separate artifact categories: tables, features, reports, charts, and models.
 
+### Task 3 — Completed production foundations
+
+Task 3 serves the fitted Task 2 bundle through FastAPI without retraining. It includes request validation, leakage-safe prediction-time feature construction, model metadata, batch inference, Prometheus metrics, structured logs, Docker Compose, MLflow with PostgreSQL and MinIO, DVC handoff metadata, Great Expectations integration, and GitHub Actions quality checks. The model binary remains outside Git and must be supplied through the documented local artifact, DVC remote, or artifact-store workflow.
+
 ## Validation Philosophy
 
 The project does not treat accuracy as the only indicator of model quality. Because late deliveries represent a smaller class, evaluation should consider recall, precision, F1-score, ROC-AUC or PR-AUC, and the confusion matrix.
@@ -263,7 +269,7 @@ A model that detects nearly every late order but produces too many false alarms 
 
 ## Future Roadmap
 
-The next stages will extend the local workflow toward deep learning, production APIs, Docker, ETL orchestration, data versioning, experiment tracking, distributed training, feature stores, monitoring, automated retraining, infrastructure as code, and the final capstone system.
+The next stages will extend the current foundations toward deep learning, ETL orchestration, distributed training, feature stores, monitoring, automated retraining, infrastructure as code, and the final capstone system.
 
 The intended long-term workflow is:
 
@@ -293,7 +299,7 @@ The exact prerequisites depend on the task, but the foundation currently uses:
 
 | Requirement | Purpose |
 |---|---|
-| Python 3.9 or newer | Runs the data and machine-learning code |
+| Python 3.11–3.13 | Runs the data, machine-learning, and inference code |
 | Jupyter Notebook or JupyterLab | Executes the notebooks |
 | PostgreSQL | Stores the relational Olist tables |
 | PostgreSQL credentials | Allows local database access |
@@ -322,6 +328,7 @@ For the current implementation, use the following order:
 3. Read Task2/README.md
 4. Run the Task 2 notebooks in numeric order
 5. Review the generated reports, charts, metrics, and model artifacts
+6. Read `Task3/README.md` and run the inference service after supplying the Task 2 bundle
 ```
 
 ## Contribution and Working Conventions
