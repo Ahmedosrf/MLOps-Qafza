@@ -1,0 +1,27 @@
+schema: '2.0'
+stages:
+  inference_bundle:
+    cmd: python -c "import sys, os; sys.path.insert(0, '..'); os.environ['DVC_MODEL_PATH']='models/06_inference_bundle.joblib';
+      from Task3.src.model_registry_export import export_bundle; export_bundle()"
+    deps:
+    - path: ../Task2/artifacts/models/06_inference_bundle.joblib
+      hash: md5
+      md5: 094c290b51d55458a8b0c1ae8d1e2622
+      size: 180824
+    - path: requirements.txt
+      hash: md5
+      md5: 3cb4046b431a5b5b0771e4e62cba76c6
+      size: 283
+    - path: src/model_loader.py
+      hash: md5
+      md5: c32d4d3138f91e9306d73a629c7ab186
+      size: 5202
+    - path: src/model_registry_export.py
+      hash: md5
+      md5: 80d8405cfa9587e833083d8637efc897
+      size: 2968
+    outs:
+    - path: models/06_inference_bundle.joblib
+      hash: md5
+      md5: 094c290b51d55458a8b0c1ae8d1e2622
+      size: 180824

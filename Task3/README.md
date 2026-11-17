@@ -144,7 +144,7 @@ dvc pull Task3/dvc.yaml
 docker build -f Task3/Dockerfile -t olist-late-delivery-api:task3-v1 .
 ```
 
-`dvc.lock` must be generated from the real bundle; this repository does not ship a fabricated checksum or a production model generated from CI fixtures. Pulling needs the lock and remote access; merely cloning the source cannot reconstruct private artifacts.
+The committed `Task3/dvc.lock` was generated from the real Olist bundle rebuilt from the official dataset, not from a CI fixture. See `docs/real_olist_verification.json` for dataset/model SHA-256 hashes, split sizes, test metrics and API parity checks. Pulling still needs an artifact remote populated with that bundle; source control contains checksums, not model bytes. The accompanying `Olist_Real_Model_Artifacts.zip` can instead be extracted at the repository root to restore the exact bundle and DVC cache without a remote. Run `dvc checkout Task3/dvc.yaml` after extraction. Real-data reconstruction used a temporary SQLite staging engine for Notebook 1 transformations; PostgreSQL ingestion was not rerun. The model has limited predictive performance (precision 0.0936, recall 0.4681, F1 0.156 on the held-out test set); integration success is not an accuracy claim.
 
 ## MLflow and artifact storage
 
