@@ -54,8 +54,8 @@ def grouped_errors(frame: pd.DataFrame, column: str, min_rows: int = 100) -> lis
 
 def numeric_psi(reference, compared, bins: int = 10) -> float:
     """Descriptive PSI using train-defined bins, not a causal/significance test."""
-    reference = pd.to_numeric(reference, errors="coerce").dropna().to_numpy()
-    compared = pd.to_numeric(compared, errors="coerce").dropna().to_numpy()
+    reference = pd.to_numeric(pd.Series(reference), errors="coerce").dropna().to_numpy()
+    compared = pd.to_numeric(pd.Series(compared), errors="coerce").dropna().to_numpy()
     edges = np.unique(np.quantile(reference, np.linspace(0, 1, bins + 1)))
     if len(edges) < 2 or not len(compared):
         return 0.0
