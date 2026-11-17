@@ -1,0 +1,1235 @@
+{
+  "model_version": "task2-v2-catboostclassifier",
+  "bundle_sha256": "d6771ada624770a6723ba395e18d556c5f7fdccafd6d5e017e93ce5e3efd77d3",
+  "policy": "Frozen bundle and threshold. No fitting, threshold selection, label change or promotion.",
+  "split_metrics": {
+    "train": {
+      "threshold": 0.14328469058748036,
+      "accuracy": 0.8573797923854937,
+      "precision": 0.3365695792880259,
+      "recall": 0.5971128608923885,
+      "f1": 0.4304890308083496,
+      "roc_auc": 0.83907795271959,
+      "average_precision": 0.43562891790101665,
+      "confusion_matrix": [
+        [
+          54258,
+          7175
+        ],
+        [
+          2456,
+          3640
+        ]
+      ],
+      "rows": 67529,
+      "late_rate": 0.09027232744450532,
+      "mean_score": 0.0892976170661463,
+      "alert_rate": 0.16015341556960713,
+      "brier_score": 0.06522442082511637,
+      "constant_train_rate_brier": 0.08212323434225736,
+      "start": "2016-09-15 12:16:38",
+      "end": "2018-04-15 20:12:35"
+    },
+    "validation": {
+      "threshold": 0.14328469058748036,
+      "accuracy": 0.8994471319972357,
+      "precision": 0.22231270358306188,
+      "recall": 0.35316946959896506,
+      "f1": 0.272863568215892,
+      "roc_auc": 0.7901988150302692,
+      "average_precision": 0.19916393781705696,
+      "confusion_matrix": [
+        [
+          12742,
+          955
+        ],
+        [
+          500,
+          273
+        ]
+      ],
+      "rows": 14470,
+      "late_rate": 0.053420870767104355,
+      "mean_score": 0.05991321076907037,
+      "alert_rate": 0.0848652384243262,
+      "brier_score": 0.04657478002036336,
+      "constant_train_rate_brier": 0.05192511119283505,
+      "start": "2018-04-15 20:17:11",
+      "end": "2018-06-21 08:29:29"
+    },
+    "test": {
+      "threshold": 0.14328469058748036,
+      "accuracy": 0.7859166609080229,
+      "precision": 0.11451206337774576,
+      "recall": 0.3322884012539185,
+      "f1": 0.17032672737011248,
+      "roc_auc": 0.690366149953398,
+      "average_precision": 0.12049407709009546,
+      "confusion_matrix": [
+        [
+          11055,
+          2459
+        ],
+        [
+          639,
+          318
+        ]
+      ],
+      "rows": 14471,
+      "late_rate": 0.06613226452905811,
+      "mean_score": 0.09354963752957475,
+      "alert_rate": 0.19190104346624284,
+      "brier_score": 0.06352038011957899,
+      "constant_train_rate_brier": 0.062341530754878555,
+      "start": "2018-06-21 08:41:07",
+      "end": "2018-08-29 15:00:37"
+    }
+  },
+  "label_audit": {
+    "train": {
+      "timestamp_late_count": 6096,
+      "calendar_day_late_count": 5290,
+      "same_due_day_flagged_late": 806,
+      "due_midnight_fraction": 1.0,
+      "approval_before_purchase_count": 0
+    },
+    "validation": {
+      "timestamp_late_count": 773,
+      "calendar_day_late_count": 624,
+      "same_due_day_flagged_late": 149,
+      "due_midnight_fraction": 1.0,
+      "approval_before_purchase_count": 0
+    },
+    "test": {
+      "timestamp_late_count": 957,
+      "calendar_day_late_count": 620,
+      "same_due_day_flagged_late": 337,
+      "due_midnight_fraction": 1.0,
+      "approval_before_purchase_count": 0
+    }
+  },
+  "test_label_sensitivity_groups": {
+    "purchase_month": [
+      {
+        "purchase_month": "2018-06",
+        "rows": 1964,
+        "timestamp_late": 21,
+        "calendar_late": 19,
+        "same_due_day": 2
+      },
+      {
+        "purchase_month": "2018-07",
+        "rows": 6156,
+        "timestamp_late": 276,
+        "calendar_late": 208,
+        "same_due_day": 68
+      },
+      {
+        "purchase_month": "2018-08",
+        "rows": 6351,
+        "timestamp_late": 660,
+        "calendar_late": 393,
+        "same_due_day": 267
+      }
+    ],
+    "customer_state": [
+      {
+        "customer_state": "BA",
+        "rows": 458,
+        "timestamp_late": 22,
+        "calendar_late": 18,
+        "same_due_day": 4
+      },
+      {
+        "customer_state": "CE",
+        "rows": 168,
+        "timestamp_late": 2,
+        "calendar_late": 1,
+        "same_due_day": 1
+      },
+      {
+        "customer_state": "DF",
+        "rows": 356,
+        "timestamp_late": 14,
+        "calendar_late": 12,
+        "same_due_day": 2
+      },
+      {
+        "customer_state": "ES",
+        "rows": 272,
+        "timestamp_late": 13,
+        "calendar_late": 9,
+        "same_due_day": 4
+      },
+      {
+        "customer_state": "GO",
+        "rows": 275,
+        "timestamp_late": 11,
+        "calendar_late": 8,
+        "same_due_day": 3
+      },
+      {
+        "customer_state": "MG",
+        "rows": 1581,
+        "timestamp_late": 33,
+        "calendar_late": 20,
+        "same_due_day": 13
+      },
+      {
+        "customer_state": "MT",
+        "rows": 110,
+        "timestamp_late": 1,
+        "calendar_late": 0,
+        "same_due_day": 1
+      },
+      {
+        "customer_state": "PA",
+        "rows": 114,
+        "timestamp_late": 3,
+        "calendar_late": 3,
+        "same_due_day": 0
+      },
+      {
+        "customer_state": "PE",
+        "rows": 241,
+        "timestamp_late": 12,
+        "calendar_late": 12,
+        "same_due_day": 0
+      },
+      {
+        "customer_state": "PR",
+        "rows": 743,
+        "timestamp_late": 24,
+        "calendar_late": 16,
+        "same_due_day": 8
+      },
+      {
+        "customer_state": "RJ",
+        "rows": 1625,
+        "timestamp_late": 88,
+        "calendar_late": 62,
+        "same_due_day": 26
+      },
+      {
+        "customer_state": "RS",
+        "rows": 720,
+        "timestamp_late": 24,
+        "calendar_late": 18,
+        "same_due_day": 6
+      },
+      {
+        "customer_state": "SC",
+        "rows": 462,
+        "timestamp_late": 16,
+        "calendar_late": 10,
+        "same_due_day": 6
+      },
+      {
+        "customer_state": "SP",
+        "rows": 6750,
+        "timestamp_late": 643,
+        "calendar_late": 389,
+        "same_due_day": 254
+      }
+    ]
+  },
+  "numeric_summaries": {
+    "train": {
+      "estimated_window_min_days": 7.005127314814815,
+      "estimated_window_max_days": 155.13546296296298,
+      "estimated_window_median_days": 23.621331018518518,
+      "estimated_window_at_most_7days_rate": 0.0,
+      "freight_median": 16.79
+    },
+    "validation": {
+      "estimated_window_min_days": 7.002766203703704,
+      "estimated_window_max_days": 82.65126157407407,
+      "estimated_window_median_days": 24.087164351851854,
+      "estimated_window_at_most_7days_rate": 0.0,
+      "freight_median": 18.23
+    },
+    "test": {
+      "estimated_window_min_days": 2.0080092592592593,
+      "estimated_window_max_days": 72.04734953703704,
+      "estimated_window_median_days": 17.59347222222222,
+      "estimated_window_at_most_7days_rate": 0.08707069311035864,
+      "freight_median": 18.58
+    }
+  },
+  "label_availability": {
+    "train_at_validation_start": {
+      "cutoff": "2018-04-15 20:17:11",
+      "labels_finalized_at_or_after_cutoff": 3100,
+      "fraction": 0.045906203260821274,
+      "late_in_overlap": 972
+    },
+    "validation_at_test_start": {
+      "cutoff": "2018-06-21 08:41:07",
+      "labels_finalized_at_or_after_cutoff": 1929,
+      "fraction": 0.1333102971665515,
+      "late_in_overlap": 98
+    }
+  },
+  "test_errors_by_purchase_month": [
+    {
+      "group": "2018-08",
+      "rows": 6351,
+      "late_count": 660,
+      "late_rate": 0.10392064241851677,
+      "alert_rate": 0.23571091166745395,
+      "precision": 0.13159652638610556,
+      "recall": 0.29848484848484846,
+      "false_positives": 1300,
+      "false_negatives": 463
+    },
+    {
+      "group": "2018-07",
+      "rows": 6156,
+      "late_count": 276,
+      "late_rate": 0.04483430799220273,
+      "alert_rate": 0.19200779727095516,
+      "precision": 0.09729272419627749,
+      "recall": 0.4166666666666667,
+      "false_positives": 1067,
+      "false_negatives": 161
+    },
+    {
+      "group": "2018-06",
+      "rows": 1964,
+      "late_count": 21,
+      "late_rate": 0.010692464358452138,
+      "alert_rate": 0.04989816700610998,
+      "precision": 0.061224489795918366,
+      "recall": 0.2857142857142857,
+      "false_positives": 92,
+      "false_negatives": 15
+    }
+  ],
+  "test_errors_by_customer_state": [
+    {
+      "group": "SP",
+      "rows": 6750,
+      "late_count": 643,
+      "late_rate": 0.09525925925925927,
+      "alert_rate": 0.06637037037037037,
+      "precision": 0.29464285714285715,
+      "recall": 0.2052877138413686,
+      "false_positives": 316,
+      "false_negatives": 511
+    },
+    {
+      "group": "RJ",
+      "rows": 1625,
+      "late_count": 88,
+      "late_rate": 0.05415384615384616,
+      "alert_rate": 0.38153846153846155,
+      "precision": 0.08387096774193549,
+      "recall": 0.5909090909090909,
+      "false_positives": 568,
+      "false_negatives": 36
+    },
+    {
+      "group": "BA",
+      "rows": 458,
+      "late_count": 22,
+      "late_rate": 0.048034934497816595,
+      "alert_rate": 0.6506550218340611,
+      "precision": 0.05704697986577181,
+      "recall": 0.7727272727272727,
+      "false_positives": 281,
+      "false_negatives": 5
+    },
+    {
+      "group": "MG",
+      "rows": 1581,
+      "late_count": 33,
+      "late_rate": 0.020872865275142316,
+      "alert_rate": 0.10183428209993675,
+      "precision": 0.062111801242236024,
+      "recall": 0.30303030303030304,
+      "false_positives": 151,
+      "false_negatives": 23
+    },
+    {
+      "group": "PE",
+      "rows": 241,
+      "late_count": 12,
+      "late_rate": 0.04979253112033195,
+      "alert_rate": 0.6307053941908713,
+      "precision": 0.07236842105263158,
+      "recall": 0.9166666666666666,
+      "false_positives": 141,
+      "false_negatives": 1
+    },
+    {
+      "group": "ES",
+      "rows": 272,
+      "late_count": 13,
+      "late_rate": 0.04779411764705882,
+      "alert_rate": 0.4742647058823529,
+      "precision": 0.07751937984496124,
+      "recall": 0.7692307692307693,
+      "false_positives": 119,
+      "false_negatives": 3
+    },
+    {
+      "group": "CE",
+      "rows": 168,
+      "late_count": 2,
+      "late_rate": 0.011904761904761904,
+      "alert_rate": 0.6904761904761905,
+      "precision": 0.017241379310344827,
+      "recall": 1.0,
+      "false_positives": 114,
+      "false_negatives": 0
+    },
+    {
+      "group": "DF",
+      "rows": 356,
+      "late_count": 14,
+      "late_rate": 0.03932584269662921,
+      "alert_rate": 0.3089887640449438,
+      "precision": 0.05454545454545454,
+      "recall": 0.42857142857142855,
+      "false_positives": 104,
+      "false_negatives": 8
+    },
+    {
+      "group": "RS",
+      "rows": 720,
+      "late_count": 24,
+      "late_rate": 0.03333333333333333,
+      "alert_rate": 0.15138888888888888,
+      "precision": 0.10091743119266056,
+      "recall": 0.4583333333333333,
+      "false_positives": 98,
+      "false_negatives": 13
+    },
+    {
+      "group": "SC",
+      "rows": 462,
+      "late_count": 16,
+      "late_rate": 0.03463203463203463,
+      "alert_rate": 0.22077922077922077,
+      "precision": 0.06862745098039216,
+      "recall": 0.4375,
+      "false_positives": 95,
+      "false_negatives": 9
+    },
+    {
+      "group": "PA",
+      "rows": 114,
+      "late_count": 3,
+      "late_rate": 0.02631578947368421,
+      "alert_rate": 0.5789473684210527,
+      "precision": 0.030303030303030304,
+      "recall": 0.6666666666666666,
+      "false_positives": 64,
+      "false_negatives": 1
+    },
+    {
+      "group": "GO",
+      "rows": 275,
+      "late_count": 11,
+      "late_rate": 0.04,
+      "alert_rate": 0.17454545454545456,
+      "precision": 0.08333333333333333,
+      "recall": 0.36363636363636365,
+      "false_positives": 44,
+      "false_negatives": 7
+    },
+    {
+      "group": "PR",
+      "rows": 743,
+      "late_count": 24,
+      "late_rate": 0.03230148048452221,
+      "alert_rate": 0.04306864064602961,
+      "precision": 0.15625,
+      "recall": 0.20833333333333334,
+      "false_positives": 27,
+      "false_negatives": 19
+    },
+    {
+      "group": "MT",
+      "rows": 110,
+      "late_count": 1,
+      "late_rate": 0.00909090909090909,
+      "alert_rate": 0.20909090909090908,
+      "precision": 0.043478260869565216,
+      "recall": 1.0,
+      "false_positives": 22,
+      "false_negatives": 0
+    }
+  ],
+  "test_errors_by_seller_state": [
+    {
+      "group": "SP",
+      "rows": 10057,
+      "late_count": 738,
+      "late_rate": 0.07338172417221836,
+      "alert_rate": 0.2137814457591727,
+      "precision": 0.10744186046511628,
+      "recall": 0.3130081300813008,
+      "false_positives": 1919,
+      "false_negatives": 507
+    },
+    {
+      "group": "RJ",
+      "rows": 743,
+      "late_count": 53,
+      "late_rate": 0.07133243606998654,
+      "alert_rate": 0.1641991924629879,
+      "precision": 0.1557377049180328,
+      "recall": 0.3584905660377358,
+      "false_positives": 103,
+      "false_negatives": 34
+    },
+    {
+      "group": "PR",
+      "rows": 1132,
+      "late_count": 37,
+      "late_rate": 0.03268551236749117,
+      "alert_rate": 0.09628975265017668,
+      "precision": 0.07339449541284404,
+      "recall": 0.21621621621621623,
+      "false_positives": 101,
+      "false_negatives": 29
+    },
+    {
+      "group": "MG",
+      "rows": 992,
+      "late_count": 22,
+      "late_rate": 0.02217741935483871,
+      "alert_rate": 0.0967741935483871,
+      "precision": 0.0625,
+      "recall": 0.2727272727272727,
+      "false_positives": 90,
+      "false_negatives": 16
+    },
+    {
+      "group": "MA",
+      "rows": 163,
+      "late_count": 32,
+      "late_rate": 0.19631901840490798,
+      "alert_rate": 0.7668711656441718,
+      "precision": 0.256,
+      "recall": 1.0,
+      "false_positives": 93,
+      "false_negatives": 0
+    },
+    {
+      "group": "SC",
+      "rows": 519,
+      "late_count": 27,
+      "late_rate": 0.05202312138728324,
+      "alert_rate": 0.09248554913294797,
+      "precision": 0.10416666666666667,
+      "recall": 0.18518518518518517,
+      "false_positives": 43,
+      "false_negatives": 22
+    },
+    {
+      "group": "RS",
+      "rows": 399,
+      "late_count": 23,
+      "late_rate": 0.05764411027568922,
+      "alert_rate": 0.11779448621553884,
+      "precision": 0.1276595744680851,
+      "recall": 0.2608695652173913,
+      "false_positives": 41,
+      "false_negatives": 17
+    },
+    {
+      "group": "BA",
+      "rows": 114,
+      "late_count": 6,
+      "late_rate": 0.05263157894736842,
+      "alert_rate": 0.22807017543859648,
+      "precision": 0.11538461538461539,
+      "recall": 0.5,
+      "false_positives": 23,
+      "false_negatives": 3
+    },
+    {
+      "group": "DF",
+      "rows": 117,
+      "late_count": 8,
+      "late_rate": 0.06837606837606838,
+      "alert_rate": 0.1623931623931624,
+      "precision": 0.21052631578947367,
+      "recall": 0.5,
+      "false_positives": 15,
+      "false_negatives": 4
+    }
+  ],
+  "test_errors_by_route": [
+    {
+      "group": "SP_SP",
+      "rows": 5186,
+      "late_count": 574,
+      "late_rate": 0.11068260701889703,
+      "alert_rate": 0.07327419976860779,
+      "precision": 0.29736842105263156,
+      "recall": 0.19686411149825783,
+      "false_positives": 267,
+      "false_negatives": 461
+    },
+    {
+      "group": "SP_RJ",
+      "rows": 963,
+      "late_count": 38,
+      "late_rate": 0.03946002076843198,
+      "alert_rate": 0.4963655244029076,
+      "precision": 0.06903765690376569,
+      "recall": 0.868421052631579,
+      "false_positives": 445,
+      "false_negatives": 5
+    },
+    {
+      "group": "SP_BA",
+      "rows": 319,
+      "late_count": 13,
+      "late_rate": 0.04075235109717868,
+      "alert_rate": 0.6865203761755486,
+      "precision": 0.045662100456621,
+      "recall": 0.7692307692307693,
+      "false_positives": 209,
+      "false_negatives": 3
+    },
+    {
+      "group": "SP_MG",
+      "rows": 952,
+      "late_count": 16,
+      "late_rate": 0.01680672268907563,
+      "alert_rate": 0.13865546218487396,
+      "precision": 0.05303030303030303,
+      "recall": 0.4375,
+      "false_positives": 125,
+      "false_negatives": 9
+    },
+    {
+      "group": "SP_ES",
+      "rows": 200,
+      "late_count": 9,
+      "late_rate": 0.045,
+      "alert_rate": 0.605,
+      "precision": 0.05785123966942149,
+      "recall": 0.7777777777777778,
+      "false_positives": 114,
+      "false_negatives": 2
+    },
+    {
+      "group": "SP_PE",
+      "rows": 169,
+      "late_count": 9,
+      "late_rate": 0.05325443786982249,
+      "alert_rate": 0.6804733727810651,
+      "precision": 0.06956521739130435,
+      "recall": 0.8888888888888888,
+      "false_positives": 107,
+      "false_negatives": 1
+    },
+    {
+      "group": "SP_CE",
+      "rows": 122,
+      "late_count": 2,
+      "late_rate": 0.01639344262295082,
+      "alert_rate": 0.7377049180327869,
+      "precision": 0.022222222222222223,
+      "recall": 1.0,
+      "false_positives": 88,
+      "false_negatives": 0
+    },
+    {
+      "group": "SP_DF",
+      "rows": 219,
+      "late_count": 9,
+      "late_rate": 0.0410958904109589,
+      "alert_rate": 0.365296803652968,
+      "precision": 0.0375,
+      "recall": 0.3333333333333333,
+      "false_positives": 77,
+      "false_negatives": 6
+    },
+    {
+      "group": "SP_SC",
+      "rows": 276,
+      "late_count": 5,
+      "late_rate": 0.018115942028985508,
+      "alert_rate": 0.29347826086956524,
+      "precision": 0.04938271604938271,
+      "recall": 0.8,
+      "false_positives": 77,
+      "false_negatives": 1
+    },
+    {
+      "group": "SP_RS",
+      "rows": 463,
+      "late_count": 14,
+      "late_rate": 0.03023758099352052,
+      "alert_rate": 0.1468682505399568,
+      "precision": 0.10294117647058823,
+      "recall": 0.5,
+      "false_positives": 61,
+      "false_negatives": 7
+    },
+    {
+      "group": "SP_GO",
+      "rows": 190,
+      "late_count": 4,
+      "late_rate": 0.021052631578947368,
+      "alert_rate": 0.2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "false_positives": 38,
+      "false_negatives": 4
+    },
+    {
+      "group": "RJ_RJ",
+      "rows": 191,
+      "late_count": 33,
+      "late_rate": 0.17277486910994763,
+      "alert_rate": 0.08376963350785341,
+      "precision": 0.375,
+      "recall": 0.18181818181818182,
+      "false_positives": 10,
+      "false_negatives": 27
+    },
+    {
+      "group": "PR_RJ",
+      "rows": 149,
+      "late_count": 2,
+      "late_rate": 0.013422818791946308,
+      "alert_rate": 0.21476510067114093,
+      "precision": 0.03125,
+      "recall": 0.5,
+      "false_positives": 31,
+      "false_negatives": 1
+    },
+    {
+      "group": "MG_RJ",
+      "rows": 138,
+      "late_count": 7,
+      "late_rate": 0.050724637681159424,
+      "alert_rate": 0.18840579710144928,
+      "precision": 0.19230769230769232,
+      "recall": 0.7142857142857143,
+      "false_positives": 21,
+      "false_negatives": 2
+    },
+    {
+      "group": "SP_PR",
+      "rows": 443,
+      "late_count": 7,
+      "late_rate": 0.01580135440180587,
+      "alert_rate": 0.04288939051918736,
+      "precision": 0.10526315789473684,
+      "recall": 0.2857142857142857,
+      "false_positives": 17,
+      "false_negatives": 5
+    },
+    {
+      "group": "PR_SP",
+      "rows": 470,
+      "late_count": 12,
+      "late_rate": 0.02553191489361702,
+      "alert_rate": 0.019148936170212766,
+      "precision": 0.0,
+      "recall": 0.0,
+      "false_positives": 9,
+      "false_negatives": 12
+    },
+    {
+      "group": "PR_MG",
+      "rows": 123,
+      "late_count": 5,
+      "late_rate": 0.04065040650406504,
+      "alert_rate": 0.10569105691056911,
+      "precision": 0.07692307692307693,
+      "recall": 0.2,
+      "false_positives": 12,
+      "false_negatives": 4
+    },
+    {
+      "group": "RJ_SP",
+      "rows": 238,
+      "late_count": 6,
+      "late_rate": 0.025210084033613446,
+      "alert_rate": 0.04201680672268908,
+      "precision": 0.2,
+      "recall": 0.3333333333333333,
+      "false_positives": 8,
+      "false_negatives": 4
+    },
+    {
+      "group": "SC_SP",
+      "rows": 208,
+      "late_count": 11,
+      "late_rate": 0.052884615384615384,
+      "alert_rate": 0.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "false_positives": 0,
+      "false_negatives": 11
+    },
+    {
+      "group": "MG_SP",
+      "rows": 319,
+      "late_count": 8,
+      "late_rate": 0.025078369905956112,
+      "alert_rate": 0.009404388714733543,
+      "precision": 0.3333333333333333,
+      "recall": 0.125,
+      "false_positives": 2,
+      "false_negatives": 7
+    },
+    {
+      "group": "PR_PR",
+      "rows": 142,
+      "late_count": 10,
+      "late_rate": 0.07042253521126761,
+      "alert_rate": 0.007042253521126761,
+      "precision": 1.0,
+      "recall": 0.1,
+      "false_positives": 0,
+      "false_negatives": 9
+    },
+    {
+      "group": "RS_SP",
+      "rows": 140,
+      "late_count": 10,
+      "late_rate": 0.07142857142857142,
+      "alert_rate": 0.007142857142857143,
+      "precision": 1.0,
+      "recall": 0.1,
+      "false_positives": 0,
+      "false_negatives": 9
+    },
+    {
+      "group": "MG_MG",
+      "rows": 244,
+      "late_count": 5,
+      "late_rate": 0.020491803278688523,
+      "alert_rate": 0.004098360655737705,
+      "precision": 0.0,
+      "recall": 0.0,
+      "false_positives": 1,
+      "false_negatives": 5
+    }
+  ],
+  "test_errors_by_estimated_window": [
+    {
+      "group": "(14.0, 21.0]",
+      "rows": 4076,
+      "late_count": 153,
+      "late_rate": 0.03753680078508342,
+      "alert_rate": 0.2460745829244357,
+      "precision": 0.07976071784646062,
+      "recall": 0.5228758169934641,
+      "false_positives": 923,
+      "false_negatives": 73
+    },
+    {
+      "group": "(21.0, 30.0]",
+      "rows": 3780,
+      "late_count": 87,
+      "late_rate": 0.023015873015873017,
+      "alert_rate": 0.21455026455026455,
+      "precision": 0.0468557336621455,
+      "recall": 0.4367816091954023,
+      "false_positives": 773,
+      "false_negatives": 49
+    },
+    {
+      "group": "(7.0, 14.0]",
+      "rows": 3741,
+      "late_count": 308,
+      "late_rate": 0.08233092755947607,
+      "alert_rate": 0.16546377973803797,
+      "precision": 0.15508885298869143,
+      "recall": 0.3116883116883117,
+      "false_positives": 523,
+      "false_negatives": 212
+    },
+    {
+      "group": "(-inf, 7.0]",
+      "rows": 1260,
+      "late_count": 395,
+      "late_rate": 0.3134920634920635,
+      "alert_rate": 0.2111111111111111,
+      "precision": 0.38345864661654133,
+      "recall": 0.2582278481012658,
+      "false_positives": 164,
+      "false_negatives": 293
+    },
+    {
+      "group": "(30.0, inf]",
+      "rows": 1614,
+      "late_count": 14,
+      "late_rate": 0.008674101610904586,
+      "alert_rate": 0.048327137546468404,
+      "precision": 0.02564102564102564,
+      "recall": 0.14285714285714285,
+      "false_positives": 76,
+      "false_negatives": 12
+    }
+  ],
+  "numeric_distribution_shift": [
+    {
+      "feature": "purchase_month",
+      "train_to_validation_psi": 11.121248480143421,
+      "train_to_test_psi": 10.624452279655372
+    },
+    {
+      "feature": "purchase_weekofyear",
+      "train_to_validation_psi": 10.443892070964607,
+      "train_to_test_psi": 10.546954249915878
+    },
+    {
+      "feature": "estimated_window_days",
+      "train_to_validation_psi": 0.11020047044029187,
+      "train_to_test_psi": 0.6291454245567598
+    },
+    {
+      "feature": "total_freight",
+      "train_to_validation_psi": 0.2870733064904185,
+      "train_to_test_psi": 0.3069805735146771
+    },
+    {
+      "feature": "payment_price_difference",
+      "train_to_validation_psi": 0.2824088854357523,
+      "train_to_test_psi": 0.3010730523408316
+    },
+    {
+      "feature": "freight_per_item",
+      "train_to_validation_psi": 0.24416690299152446,
+      "train_to_test_psi": 0.29780855461427863
+    },
+    {
+      "feature": "purchase_year",
+      "train_to_validation_psi": 0.03275499064289151,
+      "train_to_test_psi": 0.03275499064289151
+    },
+    {
+      "feature": "approval_hours",
+      "train_to_validation_psi": 0.4655129084445812,
+      "train_to_test_psi": 0.030854615295617716
+    },
+    {
+      "feature": "avg_product_weight_g",
+      "train_to_validation_psi": 0.014448758481144335,
+      "train_to_test_psi": 0.027981232658415855
+    },
+    {
+      "feature": "customer_zip_code_prefix",
+      "train_to_validation_psi": 0.011390763210641905,
+      "train_to_test_psi": 0.01976260461572594
+    },
+    {
+      "feature": "num_product_categories",
+      "train_to_validation_psi": 0.018343042807164443,
+      "train_to_test_psi": 0.016905836580928157
+    },
+    {
+      "feature": "freight_to_price_ratio",
+      "train_to_validation_psi": 0.013153382272125968,
+      "train_to_test_psi": 0.009212109856019115
+    },
+    {
+      "feature": "total_price",
+      "train_to_validation_psi": 0.007111255377229826,
+      "train_to_test_psi": 0.008733231615197236
+    },
+    {
+      "feature": "max_payment_installments",
+      "train_to_validation_psi": 0.0014119631940347497,
+      "train_to_test_psi": 0.005046812801007392
+    },
+    {
+      "feature": "price_per_item",
+      "train_to_validation_psi": 0.009634872709767173,
+      "train_to_test_psi": 0.004830830528396755
+    },
+    {
+      "feature": "avg_product_photos_qty",
+      "train_to_validation_psi": 0.005403228390957411,
+      "train_to_test_psi": 0.004744304478547621
+    },
+    {
+      "feature": "total_payment_value",
+      "train_to_validation_psi": 0.006860918874863499,
+      "train_to_test_psi": 0.0023564421174452014
+    },
+    {
+      "feature": "purchase_hour",
+      "train_to_validation_psi": 0.0016741632307066346,
+      "train_to_test_psi": 0.0019560864107541704
+    },
+    {
+      "feature": "purchase_dayofweek",
+      "train_to_validation_psi": 0.011484169556780499,
+      "train_to_test_psi": 0.0017399636304789808
+    },
+    {
+      "feature": "num_items",
+      "train_to_validation_psi": 0.0005240017134583586,
+      "train_to_test_psi": 0.0007959387061853029
+    },
+    {
+      "feature": "num_distinct_products",
+      "train_to_validation_psi": 0.0,
+      "train_to_test_psi": 0.0
+    },
+    {
+      "feature": "num_sellers",
+      "train_to_validation_psi": 0.0,
+      "train_to_test_psi": 0.0
+    },
+    {
+      "feature": "seller_state_count",
+      "train_to_validation_psi": 0.0,
+      "train_to_test_psi": 0.0
+    },
+    {
+      "feature": "payment_record_count",
+      "train_to_validation_psi": 0.0,
+      "train_to_test_psi": 0.0
+    },
+    {
+      "feature": "is_weekend",
+      "train_to_validation_psi": 0.0,
+      "train_to_test_psi": 0.0
+    },
+    {
+      "feature": "same_state_route",
+      "train_to_validation_psi": 0.0,
+      "train_to_test_psi": 0.0
+    }
+  ],
+  "test_unseen_category_rates": {
+    "customer_city": 0.015410130606039666,
+    "customer_state": 0.0,
+    "seller_state": 0.0,
+    "shipping_route": 0.0019349042913413034
+  },
+  "test_calibration_bins": [
+    {
+      "score_bin": "(-0.001, 0.05]",
+      "rows": 5660,
+      "mean_score": 0.03031080576681701,
+      "actual_late_rate": 0.021731448763250883
+    },
+    {
+      "score_bin": "(0.05, 0.1]",
+      "rows": 4149,
+      "mean_score": 0.0724275528631873,
+      "actual_late_rate": 0.0737527114967462
+    },
+    {
+      "score_bin": "(0.1, 0.15]",
+      "rows": 2098,
+      "mean_score": 0.1220220832627532,
+      "actual_late_rate": 0.1124880838894185
+    },
+    {
+      "score_bin": "(0.15, 0.2]",
+      "rows": 981,
+      "mean_score": 0.1729813350640316,
+      "actual_late_rate": 0.09785932721712538
+    },
+    {
+      "score_bin": "(0.2, 0.3]",
+      "rows": 1057,
+      "mean_score": 0.24445526994667383,
+      "actual_late_rate": 0.10312204351939451
+    },
+    {
+      "score_bin": "(0.3, 0.5]",
+      "rows": 498,
+      "mean_score": 0.3658060931387514,
+      "actual_late_rate": 0.1606425702811245
+    },
+    {
+      "score_bin": "(0.5, 1.0]",
+      "rows": 28,
+      "mean_score": 0.5513590043258659,
+      "actual_late_rate": 0.25
+    }
+  ],
+  "test_weighted_calibration_gap": 0.028177249052017687,
+  "prediction_time_constraints": {
+    "earliest_supported_stage": "after approval and availability of order items/payment aggregates",
+    "approval_missing_rows": 160,
+    "payment_aggregate_timestamps_available": false,
+    "note": "Payment rows contain no timestamps; historical prediction-time availability is unverified."
+  },
+  "label_population": {
+    "all_orders": 99441,
+    "eligible_delivered_orders": 96470,
+    "excluded_orders": 2971,
+    "excluded_by_status": {
+      "shipped": 1107,
+      "canceled": 625,
+      "unavailable": 609,
+      "invoiced": 314,
+      "processing": 301,
+      "delivered": 8,
+      "created": 5,
+      "approved": 2
+    }
+  },
+  "test_missing_customer_geo_rate": 0.0030405638863934764,
+  "feature_importances": [
+    {
+      "feature": "numeric__purchase_weekofyear",
+      "importance": 19.50928128534861
+    },
+    {
+      "feature": "numeric__purchase_year",
+      "importance": 10.562935727883746
+    },
+    {
+      "feature": "numeric__estimated_window_days",
+      "importance": 8.855949050094736
+    },
+    {
+      "feature": "numeric__purchase_month",
+      "importance": 8.601112330108942
+    },
+    {
+      "feature": "categorical__customer_state",
+      "importance": 6.3912863770021815
+    },
+    {
+      "feature": "numeric__window_per_1000km",
+      "importance": 4.58865144236902
+    },
+    {
+      "feature": "categorical__shipping_route",
+      "importance": 4.268643823421198
+    },
+    {
+      "feature": "numeric__customer_latitude",
+      "importance": 4.177462295618761
+    },
+    {
+      "feature": "numeric__approval_hours",
+      "importance": 2.9522623750680683
+    },
+    {
+      "feature": "numeric__freight_per_item",
+      "importance": 2.927846671706092
+    },
+    {
+      "feature": "numeric__customer_longitude",
+      "importance": 2.717404527300632
+    },
+    {
+      "feature": "numeric__customer_zip_code_prefix",
+      "importance": 2.662909215394171
+    },
+    {
+      "feature": "numeric__approx_route_km",
+      "importance": 2.651560816231371
+    },
+    {
+      "feature": "categorical__customer_city",
+      "importance": 2.6006038674756344
+    },
+    {
+      "feature": "categorical__seller_state",
+      "importance": 2.321323334408778
+    },
+    {
+      "feature": "numeric__avg_product_weight_g",
+      "importance": 1.930918538197355
+    },
+    {
+      "feature": "numeric__avg_product_photos_qty",
+      "importance": 1.387767992368193
+    },
+    {
+      "feature": "numeric__same_state_route",
+      "importance": 1.1269578041690058
+    },
+    {
+      "feature": "numeric__payment_price_difference",
+      "importance": 1.0521141768352997
+    },
+    {
+      "feature": "numeric__price_per_item",
+      "importance": 1.003042812573051
+    },
+    {
+      "feature": "numeric__purchase_dayofweek",
+      "importance": 0.95427604693826
+    },
+    {
+      "feature": "numeric__seller_state_longitude",
+      "importance": 0.891641275575522
+    },
+    {
+      "feature": "numeric__total_freight",
+      "importance": 0.83567093705135
+    },
+    {
+      "feature": "numeric__num_sellers",
+      "importance": 0.7350183649352963
+    },
+    {
+      "feature": "numeric__total_payment_value",
+      "importance": 0.7060881809420467
+    },
+    {
+      "feature": "numeric__purchase_hour",
+      "importance": 0.6925762942986924
+    },
+    {
+      "feature": "numeric__freight_to_price_ratio",
+      "importance": 0.5330080506254656
+    },
+    {
+      "feature": "numeric__total_price",
+      "importance": 0.49773698380464615
+    },
+    {
+      "feature": "numeric__max_payment_installments",
+      "importance": 0.4374874659111978
+    },
+    {
+      "feature": "numeric__num_items",
+      "importance": 0.3960298073378431
+    },
+    {
+      "feature": "numeric__seller_state_latitude",
+      "importance": 0.3076943296577159
+    },
+    {
+      "feature": "numeric__payment_record_count",
+      "importance": 0.2257939736936587
+    },
+    {
+      "feature": "numeric__num_product_categories",
+      "importance": 0.21654548554165823
+    },
+    {
+      "feature": "numeric__is_weekend",
+      "importance": 0.1233474076537985
+    },
+    {
+      "feature": "numeric__num_distinct_products",
+      "importance": 0.09627419123281564
+    },
+    {
+      "feature": "numeric__seller_state_count",
+      "importance": 0.06077674122523364
+    }
+  ],
+  "limitations": [
+    "Descriptive subgroup findings do not prove causes.",
+    "Existing test data was inspected during previous experiments; not a blind confirmation.",
+    "Calendar-day audit is a sensitivity check, not authorization to change business labels.",
+    "Using actual delivery as label finalization is conservative; a late status can sometimes be known before final delivery.",
+    "No observed business costs are supplied, so no operational threshold is prescribed."
+  ]
+}

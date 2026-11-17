@@ -68,3 +68,8 @@ For orders with several sellers, `seller_state` means the state of the seller fo
 The command retains the original bundle as `06_baseline_task2_v1.joblib`, writes the selected bundle to the existing inference path and saves `07_improvement_results.json`. It does not refit on validation/test after selection. To reproduce the comparison, retain the baseline bundle. Notebook 6 still reproduces the original baseline; rerun the improvement command afterwards to restore the improved serving bundle.
 
 Then export/version it with `dvc repro Task3/dvc.yaml`, restart the API to clear its process-local model cache, and verify `/model/info`. Do not silently substitute a new model file in an already-running process.
+
+
+## Diagnose a frozen model before further tuning
+
+Run `python -m Task2.src.diagnose_model` from the repository root after restoring the improved real model, splits and official CSVs. This writes `Task2/docs/model_diagnostics.json` and does not fit, tune, relabel or promote a model. `Task2/docs/MODEL_DIAGNOSIS.md` explains the observed target-definition ambiguity, delivery-window distribution shift, label-availability overlap and probability calibration limits. Treat subgroup results as descriptive, not proof of causes. Confirm the intended promise semantics before changing the target.
