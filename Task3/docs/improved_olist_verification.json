@@ -1,0 +1,71 @@
+{
+  "source_url": "https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce",
+  "download_sha256": "967e41e04fc306fe604e2a693f488995a8b41e5047418f8a5c8e4abd6deca784",
+  "bundle_sha256": "d6771ada624770a6723ba395e18d556c5f7fdccafd6d5e017e93ce5e3efd77d3",
+  "raw_orders": 99441,
+  "labeled_orders": 96470,
+  "split_rows": {
+    "train": 67529,
+    "validation": 14470,
+    "test": 14471
+  },
+  "feature_count": 36,
+  "selected_model": "CatBoostClassifier",
+  "model_version": "task2-v2-catboostclassifier",
+  "test_metrics": {
+    "threshold": 0.14328469058748036,
+    "accuracy": 0.7859166609080229,
+    "precision": 0.11451206337774576,
+    "recall": 0.3322884012539185,
+    "f1": 0.17032672737011248,
+    "roc_auc": 0.690366149953398,
+    "average_precision": 0.12049407709009546,
+    "confusion_matrix": [
+      [
+        11055,
+        2459
+      ],
+      [
+        639,
+        318
+      ]
+    ]
+  },
+  "baseline_test_metrics": {
+    "threshold": 0.3,
+    "accuracy": 0.6649160389745007,
+    "precision": 0.0935672514619883,
+    "recall": 0.46812957157784746,
+    "f1": 0.15596170583115754,
+    "roc_auc": 0.6450867392598318,
+    "average_precision": 0.10804498377878374,
+    "confusion_matrix": [
+      [
+        9174,
+        4340
+      ],
+      [
+        509,
+        448
+      ]
+    ]
+  },
+  "api_verification": {
+    "real_holdout_orders": 100,
+    "batch_status": 200,
+    "single_status": 200,
+    "ready_status": 200,
+    "max_probability_difference": 0.0
+  },
+  "environment": {
+    "python": "3.12.14",
+    "staging_database": "temporary SQLite, not PostgreSQL",
+    "training": "Task2 chronological splits; improved model CLI with shared feature builder and static geography; validation-only model and threshold selection"
+  },
+  "limits": [
+    "The test split was inspected during earlier experiments and is not a fresh blind holdout.",
+    "PostgreSQL ingestion was not rerun; the official CSVs were staged temporarily in SQLite.",
+    "Higher F1 and precision come with lower recall at the validation-selected threshold.",
+    "Classifier scores have not been calibrated."
+  ]
+}

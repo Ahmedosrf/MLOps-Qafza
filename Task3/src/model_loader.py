@@ -95,7 +95,14 @@ def _validate_bundle(raw_bundle: dict[str, Any]) -> InferenceBundle:
             check_is_fitted(fitted_object)
 
     model = raw_bundle["model"]
-    if hasattr(model, "n_features_in_") and model.n_features_in_ != len(feature_names):
+    if callable(getattr(model, "is_fitted", None)) and not model.is_fitted():
+        raise ValueError("Loaded model is not fitted")
+    model_feature_count = getattr(model, "n_features_in_", None)
+    # CatBoost 1.2.8 can deserialize n_features_in_ as zero while retaining
+    # the actual fitted feature names and trees. Validate its persisted names.
+    if not model_feature_count and hasattr(model, "feature_names_"):
+        model_feature_count = len(model.feature_names_)
+    if model_feature_count is not None and model_feature_count != len(feature_names):
         raise ValueError("Model feature count does not match the preprocessor")
     if hasattr(model, "classes_") and set(model.classes_) != {0, 1}:
         raise ValueError("Loaded model must classify on_time=0 and late=1")

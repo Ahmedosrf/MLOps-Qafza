@@ -6,16 +6,16 @@ stages:
     deps:
     - path: ../Task2/artifacts/models/06_inference_bundle.joblib
       hash: md5
-      md5: 094c290b51d55458a8b0c1ae8d1e2622
-      size: 180824
+      md5: 2e1374db3e9395768c567b15f47595de
+      size: 4598852
     - path: requirements.txt
       hash: md5
-      md5: 3cb4046b431a5b5b0771e4e62cba76c6
-      size: 283
+      md5: cace85639ed3faf013c27e9e90742ff6
+      size: 299
     - path: src/model_loader.py
       hash: md5
-      md5: c32d4d3138f91e9306d73a629c7ab186
-      size: 5202
+      md5: 8de1ec2f61d926cea18c01a53c0ca5f5
+      size: 5678
     - path: src/model_registry_export.py
       hash: md5
       md5: 80d8405cfa9587e833083d8637efc897
@@ -23,5 +23,5 @@ stages:
     outs:
     - path: models/06_inference_bundle.joblib
       hash: md5
-      md5: 094c290b51d55458a8b0c1ae8d1e2622
-      size: 180824
+      md5: 2e1374db3e9395768c567b15f47595de
+      size: 4598852

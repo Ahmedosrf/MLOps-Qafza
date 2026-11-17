@@ -25,10 +25,10 @@ jobs:
         run: python -m pip install -r Task3/requirements-dev.txt
 
       - name: Run Ruff lint
-        run: ruff check Task3
+        run: ruff check Task3 Task2/src/improve_model.py
 
       - name: Check Black formatting
-        run: black --check Task3
+        run: black --check Task3 Task2/src/improve_model.py
 
       - name: Run tests
         run: python -m pytest -q Task3/tests

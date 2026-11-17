@@ -49,3 +49,22 @@ Task 2 remains the training stage; it does not serve requests or retrain from th
 The inference bundle is the handoff consumed by Task 3. A production service must load it and call `preprocessor.transform(...)`; it must never call `fit` or `fit_transform` on incoming requests. The selected threshold is stored in the bundle and must not be duplicated as an unexplained constant in the API.
 
 The generated artifacts are intentionally ignored by Git because they are local outputs. They must be reproduced by running the notebooks in order, or later published to a versioned artifact store such as MLflow/DVC as part of Task 3.
+
+
+
+## Improved temporal model
+
+After running Notebooks 1–6 and downloading the original geolocation, items and sellers CSVs into `Task1/data/`, run from the repository root:
+
+```bash
+python -m pip install -r Task3/requirements-dev.txt
+python -m Task2.src.improve_model
+```
+
+This compares native-categorical histogram gradient boosting and CatBoost, adds seller-state/route and static geographic features, and selects the model and decision threshold using validation F1. CatBoost uses validation AUC for early stopping. The chronological test split is evaluated after selection; its previously reported results mean it is not a fresh blind holdout. All transformations fitted on examples use the training split only; static geographic reference medians contain no targets. A geographic distance to a seller-state median is approximate, not an actual shipping route or exact seller position.
+
+For orders with several sellers, `seller_state` means the state of the seller for the smallest `order_item_id`. Provide that same field in API requests. Postal-prefix and state lookup dictionaries are embedded in the fitted preprocessing bundle; inference does not need the CSVs or a network lookup. Unknown prefixes use the fitted imputer.
+
+The command retains the original bundle as `06_baseline_task2_v1.joblib`, writes the selected bundle to the existing inference path and saves `07_improvement_results.json`. It does not refit on validation/test after selection. To reproduce the comparison, retain the baseline bundle. Notebook 6 still reproduces the original baseline; rerun the improvement command afterwards to restore the improved serving bundle.
+
+Then export/version it with `dvc repro Task3/dvc.yaml`, restart the API to clear its process-local model cache, and verify `/model/info`. Do not silently substitute a new model file in an already-running process.

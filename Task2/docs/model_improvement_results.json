@@ -1,0 +1,448 @@
+{
+  "selected_family": "CatBoostClassifier",
+  "baseline_test": {
+    "threshold": 0.3,
+    "accuracy": 0.6649160389745007,
+    "precision": 0.0935672514619883,
+    "recall": 0.46812957157784746,
+    "f1": 0.15596170583115754,
+    "roc_auc": 0.6450867392598318,
+    "average_precision": 0.10804498377878374,
+    "confusion_matrix": [
+      [
+        9174,
+        4340
+      ],
+      [
+        509,
+        448
+      ]
+    ]
+  },
+  "validation_candidates": [
+    {
+      "params": {
+        "max_leaf_nodes": 15,
+        "l2_regularization": 1.0,
+        "max_iter": 150,
+        "learning_rate": 0.05
+      },
+      "validation": {
+        "threshold": 0.13253876067470077,
+        "accuracy": 0.8655148583275742,
+        "precision": 0.16808149405772496,
+        "recall": 0.38421733505821476,
+        "f1": 0.23385826771653542,
+        "roc_auc": 0.7398472824475686,
+        "average_precision": 0.15816302025716816,
+        "confusion_matrix": [
+          [
+            12227,
+            1470
+          ],
+          [
+            476,
+            297
+          ]
+        ]
+      },
+      "fit_seconds": 1.27
+    },
+    {
+      "params": {
+        "max_leaf_nodes": 15,
+        "l2_regularization": 1.0,
+        "max_iter": 300,
+        "learning_rate": 0.05
+      },
+      "validation": {
+        "threshold": 0.13187454784752242,
+        "accuracy": 0.857705597788528,
+        "precision": 0.15724946695095948,
+        "recall": 0.3816300129366106,
+        "f1": 0.22272555681389203,
+        "roc_auc": 0.7347106065000777,
+        "average_precision": 0.14926751530907365,
+        "confusion_matrix": [
+          [
+            12116,
+            1581
+          ],
+          [
+            478,
+            295
+          ]
+        ]
+      },
+      "fit_seconds": 2.32
+    },
+    {
+      "params": {
+        "max_leaf_nodes": 15,
+        "l2_regularization": 10.0,
+        "max_iter": 150,
+        "learning_rate": 0.05
+      },
+      "validation": {
+        "threshold": 0.16049800939860315,
+        "accuracy": 0.8957843814789219,
+        "precision": 0.19400499583680267,
+        "recall": 0.3014230271668823,
+        "f1": 0.23606889564336372,
+        "roc_auc": 0.747868557160372,
+        "average_precision": 0.16264732173671798,
+        "confusion_matrix": [
+          [
+            12729,
+            968
+          ],
+          [
+            540,
+            233
+          ]
+        ]
+      },
+      "fit_seconds": 1.36
+    },
+    {
+      "params": {
+        "max_leaf_nodes": 15,
+        "l2_regularization": 10.0,
+        "max_iter": 300,
+        "learning_rate": 0.05
+      },
+      "validation": {
+        "threshold": 0.13933129107511538,
+        "accuracy": 0.8743607463718037,
+        "precision": 0.17200251098556182,
+        "recall": 0.35446313065976714,
+        "f1": 0.231614539306847,
+        "roc_auc": 0.7442079695452709,
+        "average_precision": 0.1582962079158437,
+        "confusion_matrix": [
+          [
+            12378,
+            1319
+          ],
+          [
+            499,
+            274
+          ]
+        ]
+      },
+      "fit_seconds": 2.46
+    },
+    {
+      "params": {
+        "max_leaf_nodes": 31,
+        "l2_regularization": 1.0,
+        "max_iter": 150,
+        "learning_rate": 0.05
+      },
+      "validation": {
+        "threshold": 0.1753665042874967,
+        "accuracy": 0.908016586040083,
+        "precision": 0.21237113402061855,
+        "recall": 0.2664941785252264,
+        "f1": 0.23637406769936892,
+        "roc_auc": 0.739296742159665,
+        "average_precision": 0.1611444608707639,
+        "confusion_matrix": [
+          [
+            12933,
+            764
+          ],
+          [
+            567,
+            206
+          ]
+        ]
+      },
+      "fit_seconds": 1.73
+    },
+    {
+      "params": {
+        "max_leaf_nodes": 31,
+        "l2_regularization": 1.0,
+        "max_iter": 300,
+        "learning_rate": 0.05
+      },
+      "validation": {
+        "threshold": 0.1250984027431943,
+        "accuracy": 0.8680027643400138,
+        "precision": 0.16928446771378708,
+        "recall": 0.37645536869340235,
+        "f1": 0.23354735152487963,
+        "roc_auc": 0.7378493189460568,
+        "average_precision": 0.15977256932410003,
+        "confusion_matrix": [
+          [
+            12269,
+            1428
+          ],
+          [
+            482,
+            291
+          ]
+        ]
+      },
+      "fit_seconds": 2.77
+    },
+    {
+      "params": {
+        "max_leaf_nodes": 31,
+        "l2_regularization": 10.0,
+        "max_iter": 150,
+        "learning_rate": 0.05
+      },
+      "validation": {
+        "threshold": 0.1117258047278607,
+        "accuracy": 0.8557705597788527,
+        "precision": 0.15993788819875776,
+        "recall": 0.3997412677878396,
+        "f1": 0.22846580406654343,
+        "roc_auc": 0.7404802762731869,
+        "average_precision": 0.15695895281025918,
+        "confusion_matrix": [
+          [
+            12074,
+            1623
+          ],
+          [
+            464,
+            309
+          ]
+        ]
+      },
+      "fit_seconds": 1.76
+    },
+    {
+      "params": {
+        "max_leaf_nodes": 31,
+        "l2_regularization": 10.0,
+        "max_iter": 300,
+        "learning_rate": 0.05
+      },
+      "validation": {
+        "threshold": 0.1265464799156248,
+        "accuracy": 0.8752591568762957,
+        "precision": 0.16965428937259924,
+        "recall": 0.3428201811125485,
+        "f1": 0.22698072805139186,
+        "roc_auc": 0.7382125678647868,
+        "average_precision": 0.15620820793635812,
+        "confusion_matrix": [
+          [
+            12400,
+            1297
+          ],
+          [
+            508,
+            265
+          ]
+        ]
+      },
+      "fit_seconds": 2.62
+    },
+    {
+      "family": "catboost",
+      "params": {
+        "iterations": 1000,
+        "depth": 5,
+        "learning_rate": 0.04,
+        "l2_leaf_reg": 10.0,
+        "class_weights": [
+          1.0,
+          1.0
+        ],
+        "fitted_tree_count": 605
+      },
+      "validation": {
+        "threshold": 0.14759765301712735,
+        "accuracy": 0.896060815480304,
+        "precision": 0.21243115656963021,
+        "recall": 0.34928848641655885,
+        "f1": 0.26418786692759294,
+        "roc_auc": 0.7814873579270292,
+        "average_precision": 0.18945763403638097,
+        "confusion_matrix": [
+          [
+            12696,
+            1001
+          ],
+          [
+            503,
+            270
+          ]
+        ]
+      },
+      "fit_seconds": 19.51
+    },
+    {
+      "family": "catboost",
+      "params": {
+        "iterations": 1000,
+        "depth": 5,
+        "learning_rate": 0.04,
+        "l2_leaf_reg": 10.0,
+        "class_weights": [
+          1.0,
+          4.0
+        ],
+        "fitted_tree_count": 389
+      },
+      "validation": {
+        "threshold": 0.382635173172577,
+        "accuracy": 0.8939875604699378,
+        "precision": 0.20976353928299007,
+        "recall": 0.35575679172056923,
+        "f1": 0.263915547024952,
+        "roc_auc": 0.7844497350294646,
+        "average_precision": 0.18663846988600746,
+        "confusion_matrix": [
+          [
+            12661,
+            1036
+          ],
+          [
+            498,
+            275
+          ]
+        ]
+      },
+      "fit_seconds": 14.3
+    },
+    {
+      "family": "catboost",
+      "params": {
+        "iterations": 1000,
+        "depth": 7,
+        "learning_rate": 0.04,
+        "l2_leaf_reg": 10.0,
+        "class_weights": [
+          1.0,
+          1.0
+        ],
+        "fitted_tree_count": 420
+      },
+      "validation": {
+        "threshold": 0.14328469058748036,
+        "accuracy": 0.8994471319972357,
+        "precision": 0.22231270358306188,
+        "recall": 0.35316946959896506,
+        "f1": 0.272863568215892,
+        "roc_auc": 0.7901988150302692,
+        "average_precision": 0.19916393781705696,
+        "confusion_matrix": [
+          [
+            12742,
+            955
+          ],
+          [
+            500,
+            273
+          ]
+        ]
+      },
+      "fit_seconds": 22.34
+    },
+    {
+      "family": "catboost",
+      "params": {
+        "iterations": 1000,
+        "depth": 7,
+        "learning_rate": 0.04,
+        "l2_leaf_reg": 10.0,
+        "class_weights": [
+          1.0,
+          4.0
+        ],
+        "fitted_tree_count": 336
+      },
+      "validation": {
+        "threshold": 0.351426966639086,
+        "accuracy": 0.8833448514167243,
+        "precision": 0.1992110453648915,
+        "recall": 0.39197930142302717,
+        "f1": 0.26416739319965127,
+        "roc_auc": 0.7860899276250615,
+        "average_precision": 0.18337475070626477,
+        "confusion_matrix": [
+          [
+            12479,
+            1218
+          ],
+          [
+            470,
+            303
+          ]
+        ]
+      },
+      "fit_seconds": 19.16
+    }
+  ],
+  "selected_params": {
+    "iterations": 1000,
+    "depth": 7,
+    "learning_rate": 0.04,
+    "l2_leaf_reg": 10.0,
+    "class_weights": [
+      1.0,
+      1.0
+    ],
+    "fitted_tree_count": 420
+  },
+  "validation": {
+    "threshold": 0.14328469058748036,
+    "accuracy": 0.8994471319972357,
+    "precision": 0.22231270358306188,
+    "recall": 0.35316946959896506,
+    "f1": 0.272863568215892,
+    "roc_auc": 0.7901988150302692,
+    "average_precision": 0.19916393781705696,
+    "confusion_matrix": [
+      [
+        12742,
+        955
+      ],
+      [
+        500,
+        273
+      ]
+    ]
+  },
+  "test": {
+    "threshold": 0.14328469058748036,
+    "accuracy": 0.7859166609080229,
+    "precision": 0.11451206337774576,
+    "recall": 0.3322884012539185,
+    "f1": 0.17032672737011248,
+    "roc_auc": 0.690366149953398,
+    "average_precision": 0.12049407709009546,
+    "confusion_matrix": [
+      [
+        11055,
+        2459
+      ],
+      [
+        639,
+        318
+      ]
+    ]
+  },
+  "split_rows": {
+    "train": 67529,
+    "validation": 14470,
+    "test": 14471
+  },
+  "selection_metric": "validation_f1",
+  "feature_count": 36,
+  "python_version": "3.12.14",
+  "sklearn_version": "1.8.0",
+  "limitations": [
+    "Test split was previously reported for baseline and initial HGB search; this is not a new blind holdout.",
+    "Threshold and hyperparameters were selected on validation only; test results did not alter selection.",
+    "Observed probabilities are classifier scores; no calibration claim is made."
+  ],
+  "bundle_sha256": "d6771ada624770a6723ba395e18d556c5f7fdccafd6d5e017e93ce5e3efd77d3"
+}

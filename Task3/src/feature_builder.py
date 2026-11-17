@@ -107,6 +107,16 @@ def build_prediction_features(frame: pd.DataFrame) -> pd.DataFrame:
         )
         features["is_weekend"] = (purchase_time.dt.dayofweek >= 5).astype("int8")
 
+    if {"customer_state", "seller_state"}.issubset(features.columns):
+        features["same_state_route"] = (
+            features["customer_state"] == features["seller_state"]
+        ).astype("int8")
+        features["shipping_route"] = (
+            features["seller_state"].astype(str)
+            + "_"
+            + features["customer_state"].astype(str)
+        )
+
     columns_to_remove = [
         *IDENTIFIER_COLUMNS,
         "order_status",

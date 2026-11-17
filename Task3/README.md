@@ -144,7 +144,9 @@ dvc pull Task3/dvc.yaml
 docker build -f Task3/Dockerfile -t olist-late-delivery-api:task3-v1 .
 ```
 
-The committed `Task3/dvc.lock` was generated from the real Olist bundle rebuilt from the official dataset, not from a CI fixture. See `docs/real_olist_verification.json` for dataset/model SHA-256 hashes, split sizes, test metrics and API parity checks. Pulling still needs an artifact remote populated with that bundle; source control contains checksums, not model bytes. The accompanying `Olist_Real_Model_Artifacts.zip` can instead be extracted at the repository root to restore the exact bundle and DVC cache without a remote. Run `dvc checkout Task3/dvc.yaml` after extraction. Real-data reconstruction used a temporary SQLite staging engine for Notebook 1 transformations; PostgreSQL ingestion was not rerun. The model has limited predictive performance (precision 0.0936, recall 0.4681, F1 0.156 on the held-out test set); integration success is not an accuracy claim.
+The committed `Task3/dvc.lock` pins the improved real Olist model, not the CI fixture. `docs/real_olist_verification.json` records the historical baseline; `docs/improved_olist_verification.json` records the current candidate and its SHA-256. A DVC remote still requires storage configured and populated by the owner. Alternatively extract `Olist_Improved_Model_Artifacts.zip` at the repository root and run `dvc checkout Task3/dvc.yaml` to restore the exact model from the included DVC cache. The package also retains the baseline for rollback.
+
+The candidate improves test F1 from 0.1560 to 0.1703, precision from 0.0936 to 0.1145 and ROC-AUC from 0.6451 to 0.6904, while recall decreases from 0.4681 to 0.3323. These are limited gains with a clear tradeoff. See `Task2/docs/MODEL_IMPROVEMENT.md` for full results and test-exposure limitations.
 
 ## MLflow and artifact storage
 
@@ -169,3 +171,8 @@ Prometheus-format metrics are available at `http://127.0.0.1:8000/metrics`. The 
 ## Readiness and container permissions
 
 `/live` reports process liveness. `/ready` and `/health` load and validate the cached model bundle, including fitted sklearn objects and feature order, and return 503 when it cannot be used. Compose probes `/ready` and runs as UID 10001. New log volumes inherit the image directory ownership. If an older volume was created by root, stop the API and fix ownership once using `docker compose run --rm --user 0 --no-deps --entrypoint chown api -R 10001:10001 /app/Task3/logs`, then start it normally. Do not delete an existing log volume to fix permissions. Model changes require a service restart.
+
+
+## Improved model input and artifact policy
+
+`Task2/src/improve_model.py` trains the improved candidate using the same temporal split. Seller state is the state of the seller for the first item by `order_item_id`, including multi-seller orders. It must match that policy at inference. Static geographic reference dictionaries are stored inside the preprocessing pipeline, which computes buyer coordinates, seller-state median coordinates and an approximate straight-line distance. This is not exact seller location or road distance. No raw CSV or network access is needed during inference. Restart the service after changing the bundle and inspect `/model/info` for its version. See `Task2/docs/model_improvement_results.json` for the exact comparison and limitations.
