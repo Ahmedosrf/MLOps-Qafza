@@ -1,0 +1,7 @@
+{
+  "model_version": "task2-v3-calendar-day",
+  "target_definition": "late_after_estimated_calendar_day",
+  "round_trip_passed": true,
+  "payments_omitted": true,
+  "max_probability_difference": 0.0
+}

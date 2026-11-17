@@ -5,6 +5,10 @@ from __future__ import annotations
 from typing import Any
 
 import pandas as pd
+import numpy as np
+
+from .dates import local_order_dates
+from .contract import PAYMENT_FIELDS
 
 REQUIRED_COLUMNS = {
     "order_purchase_timestamp",
@@ -58,18 +62,30 @@ POSITIVE_COUNT_COLUMNS = {
 def validate_prediction_frame(frame: pd.DataFrame) -> None:
     """Raise ValueError when prediction input violates the data expectations."""
 
-    missing = REQUIRED_COLUMNS.difference(frame.columns)
+    required = REQUIRED_COLUMNS.difference(PAYMENT_FIELDS)
+    missing = required.difference(frame.columns)
     if missing:
         raise ValueError(f"columns are missing: {sorted(missing)}")
 
-    if frame[list(REQUIRED_COLUMNS)].isnull().any().any():
+    if frame[list(required)].isnull().any().any():
         raise ValueError("prediction input contains missing values")
 
     for column in NON_NEGATIVE_COLUMNS:
-        if (pd.to_numeric(frame[column], errors="coerce") < 0).any():
+        if column in PAYMENT_FIELDS and (
+            column not in frame or frame[column].isna().all()
+        ):
+            continue
+        numeric = pd.to_numeric(frame[column], errors="coerce")
+        if not np.isfinite(numeric.to_numpy(dtype=float)).all():
+            raise ValueError(f"{column} must contain finite numeric values")
+        if (numeric < 0).any():
             raise ValueError(f"{column} must be non-negative")
 
     for column in POSITIVE_COUNT_COLUMNS:
+        if column in PAYMENT_FIELDS and (
+            column not in frame or frame[column].isna().all()
+        ):
+            continue
         if (pd.to_numeric(frame[column], errors="coerce") <= 0).any():
             raise ValueError(f"{column} must be greater than zero")
 
@@ -83,8 +99,13 @@ def validate_prediction_frame(frame: pd.DataFrame) -> None:
         "order_estimated_delivery_date",
         "order_approved_at",
     ):
-        if pd.to_datetime(frame[column], errors="coerce").isna().any():
+        if local_order_dates(frame[column]).isna().any():
             raise ValueError(f"{column} contains an invalid date")
+
+    purchase = local_order_dates(frame["order_purchase_timestamp"])
+    approved = local_order_dates(frame["order_approved_at"])
+    if (approved < purchase).any():
+        raise ValueError("Approval cannot precede purchase")
 
 
 def validation_summary(frame: pd.DataFrame) -> dict[str, Any]:

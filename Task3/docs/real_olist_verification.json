@@ -1,0 +1,39 @@
+{
+  "source_url": "https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce",
+  "download_sha256": "967e41e04fc306fe604e2a693f488995a8b41e5047418f8a5c8e4abd6deca784",
+  "bundle_sha256": "938931539b965ae51c349d54e0e67b595c602d6af1e4372d2fa712e7c1fe8c9d",
+  "raw_orders": 99441,
+  "labeled_orders": 96470,
+  "split_rows": {
+    "train": 67529,
+    "validation": 14470,
+    "test": 14471
+  },
+  "feature_count": 808,
+  "selected_model": "logistic",
+  "test_metrics": {
+    "threshold": 0.3,
+    "accuracy": 0.6649,
+    "precision": 0.0936,
+    "recall": 0.4681,
+    "f1": 0.156,
+    "roc_auc": 0.6451,
+    "pr_auc": 0.108
+  },
+  "api_verification": {
+    "real_holdout_orders": 100,
+    "batch_status": 200,
+    "single_status": 200,
+    "ready_status": 200,
+    "max_probability_difference": 0.0
+  },
+  "environment": {
+    "python": "3.12.14",
+    "staging_database": "temporary SQLite, not PostgreSQL",
+    "training": "Task2 notebooks 01 transformations, 02, 03, shared 05, 06; no test set tuning"
+  },
+  "limits": [
+    "Container CI uses synthetic fitted fixture; original PostgreSQL ingestion was not rerun.",
+    "Metrics reflect existing model selection policy; this is not an accuracy improvement claim."
+  ]
+}

@@ -26,4 +26,6 @@ def model_info(
         model_version=bundle.model_version,
         threshold=bundle.threshold,
         feature_count=len(bundle.feature_names),
+        target_definition=bundle.feature_metadata.get("target_definition"),
+        prediction_stage=bundle.feature_metadata.get("prediction_stage"),
     )

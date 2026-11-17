@@ -5,8 +5,9 @@ artifact_uri: s3://mlflow-artifacts
 s3_endpoint_url: http://minio:9000
 aws_access_key_id: minioadmin
 aws_secret_access_key: minioadmin
-model_version: task2-v1
+model_version: task2-v3-calendar-day
 
 # The service keeps MODEL_BUNDLE_PATH as a local fallback for the current
 # handoff. After registering the bundle, set MODEL_SOURCE=mlflow and provide
-# MODEL_URI= models:/olist-late-delivery/Production.
+# MODEL_URI=models:/olist-late-delivery/<reviewed-version>.
+

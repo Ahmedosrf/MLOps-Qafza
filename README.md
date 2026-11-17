@@ -77,7 +77,7 @@ late = 1      when the actual delivery date is after the estimated delivery date
 on_time = 0   when the actual delivery date is on or before the estimated date
 ```
 
-The objective is to identify orders that are likely to be delivered late while avoiding data leakage. The detailed target definition, feature policy, splitting strategy, and evaluation results are documented in [Task 2](./Task2/README.md).
+The current v3 target compares local calendar dates: arrival on the promised day is on time. Prediction is after approval, with as-of label availability and rolling temporal evaluation. The model remains experimental and its predictive performance is weak. The objective is to identify orders that are likely to be delivered late while avoiding data leakage. The detailed target definition, feature policy, splitting strategy, and evaluation results are documented in [Task 2](./Task2/README.md).
 
 ## Dataset Overview
 
@@ -259,7 +259,7 @@ The Task 2 pipeline stores intermediate outputs in separate artifact categories:
 
 ### Task 3 — Completed production foundations
 
-Task 3 serves the fitted Task 2 bundle through FastAPI without retraining. It includes request validation, leakage-safe prediction-time feature construction, model metadata, batch inference, Prometheus metrics, structured logs, Docker Compose, MLflow with PostgreSQL and MinIO, DVC handoff metadata, Great Expectations integration, and GitHub Actions quality checks. The model binary remains outside Git and must be supplied through the documented local artifact, DVC remote, or artifact-store workflow.
+Task 3 serves the fitted Task 2 bundle through FastAPI without retraining. It includes request validation, leakage-safe prediction-time feature construction, model metadata, batch inference, Prometheus metrics, structured logs, Docker Compose, MLflow with PostgreSQL and MinIO, DVC initialization and handoff pipeline, Great Expectations integration, and GitHub Actions quality checks. The model binary remains outside Git and must be supplied through the documented local artifact, DVC remote, or artifact-store workflow.
 
 ## Validation Philosophy
 
@@ -346,3 +346,4 @@ The Olist dataset should be used and redistributed according to the terms and at
 This repository is an educational MLOps training project. The code and workflows are intended for learning, experimentation, and reproducibility practice. They should be reviewed and adapted before being used in a production environment.
 
 The recorded metrics and validation results describe the execution captured in the project. They may change if the source data, filtering rules, feature policy, split strategy, or model configuration changes.
+

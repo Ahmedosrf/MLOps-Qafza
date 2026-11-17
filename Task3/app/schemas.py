@@ -22,12 +22,14 @@ class ModelInfoResponse(BaseModel):
     model_version: str
     threshold: float = Field(gt=0, lt=1)
     feature_count: int = Field(gt=0)
+    target_definition: str | None = None
+    prediction_stage: str | None = None
 
 
 class OrderPayload(BaseModel):
     """Validated prediction-time fields plus permitted Task 2 extra features."""
 
-    model_config = {"extra": "forbid"}
+    model_config = {"extra": "forbid", "allow_inf_nan": False}
 
     order_purchase_timestamp: str
     order_estimated_delivery_date: str
@@ -45,9 +47,9 @@ class OrderPayload(BaseModel):
     avg_product_weight_g: float = Field(ge=0)
     avg_product_photos_qty: float = Field(ge=0)
     seller_state_count: int = Field(gt=0)
-    payment_record_count: int = Field(gt=0)
-    total_payment_value: float = Field(ge=0)
-    max_payment_installments: int = Field(gt=0)
+    payment_record_count: int | None = Field(default=None, gt=0)
+    total_payment_value: float | None = Field(default=None, ge=0)
+    max_payment_installments: int | None = Field(default=None, gt=0)
 
 
 class PredictionResponse(BaseModel):
@@ -60,6 +62,8 @@ class PredictionResponse(BaseModel):
     model_name: str
     model_version: str
     latency_ms: float = Field(ge=0)
+    target_definition: str | None = None
+    prediction_stage: str | None = None
 
 
 class BatchPredictionRequest(BaseModel):

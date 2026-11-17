@@ -7,7 +7,7 @@ application:
 
 model:
   bundle_path: Task2/artifacts/models/06_inference_bundle.joblib
-  expected_version: task2-v1
+  expected_version: task2-v3-calendar-day
 
 validation:
   reject_invalid_requests: true
@@ -16,3 +16,4 @@ validation:
 logging:
   file_path: Task3/logs/app.log
   include_request_payload: false
+

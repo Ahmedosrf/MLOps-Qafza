@@ -12,13 +12,15 @@ RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r /app/Task3/requirements.txt
 
 COPY Task3 /app/Task3
-COPY Task2/artifacts/models/06_inference_bundle.joblib \
+COPY Task3/models/06_inference_bundle.joblib \
      /app/Task2/artifacts/models/06_inference_bundle.joblib
 
 RUN useradd --create-home --uid 10001 appuser \
+    && mkdir -p /app/Task3/logs \
     && chown -R appuser:appuser /app
 USER appuser
 
 EXPOSE 8000
 
 CMD ["uvicorn", "Task3.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+

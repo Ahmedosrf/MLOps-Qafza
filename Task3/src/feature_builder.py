@@ -9,6 +9,8 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from .dates import local_order_dates
+
 
 POST_OUTCOME_COLUMNS = (
     "order_delivered_carrier_date",
@@ -57,7 +59,7 @@ def build_prediction_features(frame: pd.DataFrame) -> pd.DataFrame:
 
     for column in DATE_COLUMNS:
         if column in features.columns:
-            features[column] = pd.to_datetime(features[column], errors="coerce")
+            features[column] = local_order_dates(features[column])
 
     purchase_time = features.get("order_purchase_timestamp")
     if purchase_time is not None:
@@ -105,6 +107,16 @@ def build_prediction_features(frame: pd.DataFrame) -> pd.DataFrame:
         )
         features["is_weekend"] = (purchase_time.dt.dayofweek >= 5).astype("int8")
 
+    if {"customer_state", "seller_state"}.issubset(features.columns):
+        features["same_state_route"] = (
+            features["customer_state"] == features["seller_state"]
+        ).astype("int8")
+        features["shipping_route"] = (
+            features["seller_state"].astype(str)
+            + "_"
+            + features["customer_state"].astype(str)
+        )
+
     columns_to_remove = [
         *IDENTIFIER_COLUMNS,
         "order_status",
@@ -123,3 +135,33 @@ __all__ = [
     "POST_OUTCOME_COLUMNS",
     "build_prediction_features",
 ]
+
+
+def build_corrected_prediction_features(frame: pd.DataFrame) -> pd.DataFrame:
+    """Calendar-day v3: approval-stage inputs, no untimed payments or absolute calendar."""
+    from .contract import PAYMENT_FIELDS
+
+    clean = frame.drop(
+        columns=[*PAYMENT_FIELDS, "prediction_at", "label_available_at"],
+        errors="ignore",
+    )
+    features = build_prediction_features(clean)
+    purchase = local_order_dates(frame["order_purchase_timestamp"])
+    approval = local_order_dates(frame["order_approved_at"])
+    due_end = local_order_dates(
+        frame["order_estimated_delivery_date"]
+    ).dt.normalize() + pd.Timedelta(days=1)
+    # Exclusive next midnight is the end of the promised calendar day.
+    features["estimated_window_days"] = (due_end - purchase).dt.total_seconds() / 86400
+    features["remaining_window_days_at_approval"] = (
+        due_end - approval
+    ).dt.total_seconds() / 86400
+    return features.drop(
+        columns=[
+            "purchase_year",
+            "purchase_month",
+            "purchase_weekofyear",
+            "payment_price_difference",
+        ],
+        errors="ignore",
+    )

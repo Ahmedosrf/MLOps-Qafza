@@ -77,6 +77,48 @@ def _validate_bundle(raw_bundle: dict[str, Any]) -> InferenceBundle:
     if not feature_names:
         raise ValueError("Inference bundle must contain at least one feature name")
 
+    if not callable(getattr(raw_bundle["preprocessor"], "transform", None)):
+        raise TypeError("Loaded preprocessor must provide transform")
+    if not callable(getattr(raw_bundle["model"], "predict_proba", None)):
+        raise TypeError("Loaded model must provide predict_proba")
+    preprocessor = raw_bundle["preprocessor"]
+    if hasattr(preprocessor, "get_feature_names_out"):
+        if tuple(preprocessor.get_feature_names_out()) != feature_names:
+            raise ValueError(
+                "Bundle feature names do not match the fitted preprocessor"
+            )
+    from sklearn.utils.validation import check_is_fitted
+    from sklearn.base import BaseEstimator
+
+    for fitted_object in (raw_bundle["model"], preprocessor):
+        if isinstance(fitted_object, BaseEstimator):
+            check_is_fitted(fitted_object)
+
+    model = raw_bundle["model"]
+    if callable(getattr(model, "is_fitted", None)) and not model.is_fitted():
+        raise ValueError("Loaded model is not fitted")
+    model_feature_count = getattr(model, "n_features_in_", None)
+    # CatBoost 1.2.8 can deserialize n_features_in_ as zero while retaining
+    # the actual fitted feature names and trees. Validate its persisted names.
+    if not model_feature_count and hasattr(model, "feature_names_"):
+        model_feature_count = len(model.feature_names_)
+    if model_feature_count is not None and model_feature_count != len(feature_names):
+        raise ValueError("Model feature count does not match the preprocessor")
+    if hasattr(model, "classes_") and set(model.classes_) != {0, 1}:
+        raise ValueError("Loaded model must classify on_time=0 and late=1")
+
+    metadata = dict(raw_bundle.get("feature_metadata", {}))
+    if metadata.get("feature_policy") is not None:
+        from .contract import FEATURE_POLICY, TARGET_DEFINITION, PREDICTION_STAGE
+
+        if metadata["feature_policy"] != FEATURE_POLICY:
+            raise ValueError("Unsupported feature policy")
+        if (
+            metadata.get("target_definition") != TARGET_DEFINITION
+            or metadata.get("prediction_stage") != PREDICTION_STAGE
+        ):
+            raise ValueError("Bundle target/prediction-stage contract mismatch")
+
     return InferenceBundle(
         model=raw_bundle["model"],
         preprocessor=raw_bundle["preprocessor"],
@@ -91,7 +133,24 @@ def _validate_bundle(raw_bundle: dict[str, Any]) -> InferenceBundle:
 def load_inference_bundle(path: str | Path | None = None) -> InferenceBundle:
     """Load a fitted bundle from disk without fitting any object."""
 
-    bundle_path = resolve_bundle_path(path)
+    source = os.getenv("MODEL_SOURCE", "local")
+    if path is None and source == "mlflow":
+        import mlflow
+
+        uri = os.environ.get("MODEL_URI")
+        if not uri:
+            raise ValueError("MODEL_URI is required for MODEL_SOURCE=mlflow")
+        mlflow.set_tracking_uri(
+            os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
+        )
+        downloaded = Path(mlflow.artifacts.download_artifacts(artifact_uri=uri))
+        metadata = mlflow.models.Model.load(str(downloaded / "MLmodel"))
+        artifact = metadata.flavors["python_function"]["artifacts"]["bundle"]["path"]
+        bundle_path = downloaded / artifact
+    elif path is not None or source == "local":
+        bundle_path = resolve_bundle_path(path)
+    else:
+        raise ValueError(f"Unsupported MODEL_SOURCE: {source}")
     if not bundle_path.is_file():
         raise FileNotFoundError(f"Inference bundle not found: {bundle_path}")
 

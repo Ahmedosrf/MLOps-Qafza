@@ -1,0 +1,23 @@
+{
+  "model_info": {
+    "model_name": "olist-late-delivery",
+    "model_version": "task2-v3-calendar-day",
+    "threshold": 0.6356438452043396,
+    "feature_count": 664,
+    "target_definition": "late_after_estimated_calendar_day",
+    "prediction_stage": "after_approval"
+  },
+  "bundle_sha256": "4602e7e19dac3ff6ff538fae6c9d9c6376ad589f618955f49ea0a10179fbf9fb",
+  "real_orders_tested": 100,
+  "batch_status": 200,
+  "single_status": 200,
+  "ready_status": 200,
+  "max_probability_difference": 0.0,
+  "payment_fields_omitted_successfully": true,
+  "unused_payment_values_do_not_change_prediction": true,
+  "target_definition": "late_after_estimated_calendar_day",
+  "limitations": [
+    "Retrospective June-August cohort, previously inspected; not blind evaluation.",
+    "No deployment/merge; experimental model quality remains weak."
+  ]
+}

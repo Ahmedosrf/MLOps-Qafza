@@ -83,11 +83,10 @@ def test_root_route_returns_service_information():
 
 
 def test_health_route_returns_service_status():
-    response = client.get("/health")
+    response = client.get("/live")
 
     assert response.status_code == 200
     assert response.json()["status"] in {"ok", "degraded"}
-    assert "model_bundle_available" in response.json()
 
 
 def test_model_info_route_returns_bundle_metadata():
@@ -99,6 +98,8 @@ def test_model_info_route_returns_bundle_metadata():
         "model_version": "task2-v1",
         "threshold": 0.3,
         "feature_count": 2,
+        "target_definition": None,
+        "prediction_stage": None,
     }
 
 

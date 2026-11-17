@@ -1,0 +1,763 @@
+{
+  "contract": {
+    "feature_policy": "calendar-day-v3",
+    "target_definition": "late_after_estimated_calendar_day",
+    "prediction_stage": "after_approval",
+    "time_zone": "America/Sao_Paulo",
+    "deadline_policy": "end_of_estimated_local_calendar_day; next midnight exclusive",
+    "payment_policy": "excluded; historical availability not verified",
+    "calendar_policy": "absolute year/month/week excluded; weekday/hour retained",
+    "seller_state_policy": "state of seller for smallest order_item_id",
+    "final_fit_cutoff": "2018-06-01 00:00:00",
+    "label_availability_policy": "actual_delivery_before_cutoff_for_both_classes",
+    "scores_calibrated": false,
+    "release_status": "experimental_not_production_ready"
+  },
+  "data_manifest": {
+    "source_csv_sha256": {
+      "olist_customers_dataset.csv": "983a422239e1712ded753b3bf9ecf47dc73f144d306029dcfa99e70a226883d2",
+      "olist_geolocation_dataset.csv": "b514f6fc991b9566aeba02aa5d67e2c3630f034b60a0e05aa0d082a3b66d88d6",
+      "olist_order_items_dataset.csv": "0bc4d068c4fe38cbb01bd90e8746e3c613fe7b4baef75fab7b0e329701c3e279",
+      "olist_order_payments_dataset.csv": "4f713964f2815dbbaa40b9488268c55aac3627bfce5aa96cf58d1f3616de3cc0",
+      "olist_order_reviews_dataset.csv": "012b61c7593e34f51fa614efdf802b9c7056ce6aae5307ddb93236e7cfc797d7",
+      "olist_orders_dataset.csv": "8df58ef3d2d7e9944010f7beecd9b75367f5588ec6e3c91cec19ae3345ef9ecf",
+      "olist_products_dataset.csv": "3e6569628a17fbc75fd206ee357b59e20364b9afa90f5b6cd5b4d624c58aa9cc",
+      "olist_sellers_dataset.csv": "1f643d2b950373b85735e7794b20986f528d7a000432e7c6f9bcbb44d0846a0e",
+      "product_category_name_translation.csv": "a81f0d1f27b27e7293f761bc79e3ce8f348ee39c4b3ed3e49bde38f478586278"
+    },
+    "joined_artifact_sha256": "6a94f430f4a28312d579a69fc57d78a20fa7174495be5f00188c947166befaba",
+    "target_definition": "late_after_estimated_calendar_day",
+    "prediction_stage": "after_approval",
+    "label_availability_policy": "actual_delivery_before_cutoff_for_both_classes",
+    "raw_rows": 99441,
+    "eligible_rows": 96395,
+    "late_count": 6533,
+    "excluded_rows": 3046,
+    "folds": [
+      {
+        "start": "2018-03-01 00:00:00",
+        "end": "2018-04-01 00:00:00",
+        "train_rows": 53618,
+        "validation_rows": 7076,
+        "purged_training_labels": 3519,
+        "purged_validation_labels": 7
+      },
+      {
+        "start": "2018-04-01 00:00:00",
+        "end": "2018-06-01 00:00:00",
+        "train_rows": 60442,
+        "validation_rows": 11180,
+        "purged_training_labels": 3778,
+        "purged_validation_labels": 2384
+      }
+    ],
+    "final_fit_cutoff": "2018-06-01 00:00:00",
+    "final_fit_rows": 75388,
+    "final_fit_late_count": 5368,
+    "test_start": "2018-06-01 00:00:00",
+    "test_end_exclusive": "2018-09-01 00:00:00",
+    "test_rows": 18611,
+    "test_late_count": 671,
+    "test_label_observation_end": "2018-10-17 13:22:46",
+    "final_fit_label_max": "2018-05-31 19:05:39",
+    "limitations": [
+      "Delivered orders with valid chronological timestamps only; unresolved/cancelled population excluded.",
+      "Test outcomes are scored retrospectively after delivery, not available for training at TEST_START.",
+      "Existing June-August data was previously inspected; evaluation is exploratory, not blind."
+    ]
+  },
+  "candidates": [
+    {
+      "candidate": {
+        "name": "logistic",
+        "family": "logistic",
+        "class_weight": null
+      },
+      "rolling_validation": {
+        "threshold": 0.08315501999121785,
+        "accuracy": 0.7908085013146363,
+        "precision": 0.19611111111111112,
+        "recall": 0.4328632740649908,
+        "f1": 0.2699292678264194,
+        "roc_auc": 0.6678575531409764,
+        "average_precision": 0.17712069041149425,
+        "confusion_matrix": [
+          [
+            13731,
+            2894
+          ],
+          [
+            925,
+            706
+          ]
+        ]
+      },
+      "fold_metrics": [
+        {
+          "threshold": 0.08315501999121785,
+          "accuracy": 0.7713397399660825,
+          "precision": 0.40148698884758366,
+          "recall": 0.3991130820399113,
+          "f1": 0.40029651593773163,
+          "roc_auc": 0.6908749449034052,
+          "average_precision": 0.34622499609576285,
+          "confusion_matrix": [
+            [
+              4918,
+              805
+            ],
+            [
+              813,
+              540
+            ]
+          ]
+        },
+        {
+          "threshold": 0.08315501999121785,
+          "accuracy": 0.8031305903398926,
+          "precision": 0.07361419068736141,
+          "recall": 0.5971223021582733,
+          "f1": 0.13106987761547573,
+          "roc_auc": 0.7704925767696245,
+          "average_precision": 0.09625047135645079,
+          "confusion_matrix": [
+            [
+              8813,
+              2089
+            ],
+            [
+              112,
+              166
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": {
+        "name": "logistic_balanced",
+        "family": "logistic",
+        "class_weight": "balanced"
+      },
+      "rolling_validation": {
+        "threshold": 0.6356438452043396,
+        "accuracy": 0.8154031551270815,
+        "precision": 0.2188813449725186,
+        "recall": 0.4150827713059473,
+        "f1": 0.28662150719729046,
+        "roc_auc": 0.6832474195912834,
+        "average_precision": 0.1920244216351022,
+        "confusion_matrix": [
+          [
+            14209,
+            2416
+          ],
+          [
+            954,
+            677
+          ]
+        ]
+      },
+      "fold_metrics": [
+        {
+          "threshold": 0.6356438452043396,
+          "accuracy": 0.7652628603730921,
+          "precision": 0.3869309838472834,
+          "recall": 0.3895048041389505,
+          "f1": 0.38821362799263354,
+          "roc_auc": 0.6763130424181467,
+          "average_precision": 0.3348302506553416,
+          "confusion_matrix": [
+            [
+              4888,
+              835
+            ],
+            [
+              826,
+              527
+            ]
+          ]
+        },
+        {
+          "threshold": 0.6356438452043396,
+          "accuracy": 0.8471377459749553,
+          "precision": 0.08665511265164645,
+          "recall": 0.539568345323741,
+          "f1": 0.1493280238924838,
+          "roc_auc": 0.7676147469476262,
+          "average_precision": 0.09427722460661825,
+          "confusion_matrix": [
+            [
+              9321,
+              1581
+            ],
+            [
+              128,
+              150
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": {
+        "name": "hgb_15",
+        "family": "hgb",
+        "leaves": 15
+      },
+      "rolling_validation": {
+        "threshold": 0.08548899171115376,
+        "accuracy": 0.7720749342681859,
+        "precision": 0.1774604793472718,
+        "recall": 0.42673206621704474,
+        "f1": 0.2506753106428957,
+        "roc_auc": 0.6502173582331058,
+        "average_precision": 0.16074536612213447,
+        "confusion_matrix": [
+          [
+            13399,
+            3226
+          ],
+          [
+            935,
+            696
+          ]
+        ]
+      },
+      "fold_metrics": [
+        {
+          "threshold": 0.08548899171115376,
+          "accuracy": 0.7557942340305257,
+          "precision": 0.3678646934460888,
+          "recall": 0.3858093126385809,
+          "f1": 0.37662337662337664,
+          "roc_auc": 0.6722679547097918,
+          "average_precision": 0.31628930216218787,
+          "confusion_matrix": [
+            [
+              4826,
+              897
+            ],
+            [
+              831,
+              522
+            ]
+          ]
+        },
+        {
+          "threshold": 0.08548899171115376,
+          "accuracy": 0.7823792486583184,
+          "precision": 0.06951658010387535,
+          "recall": 0.6258992805755396,
+          "f1": 0.12513484358144553,
+          "roc_auc": 0.7634321271656312,
+          "average_precision": 0.08953114197589293,
+          "confusion_matrix": [
+            [
+              8573,
+              2329
+            ],
+            [
+              104,
+              174
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": {
+        "name": "hgb_31",
+        "family": "hgb",
+        "leaves": 31
+      },
+      "rolling_validation": {
+        "threshold": 0.08920684452426061,
+        "accuracy": 0.7796888694127958,
+        "precision": 0.17732793522267207,
+        "recall": 0.4028203556100552,
+        "f1": 0.24625187406296853,
+        "roc_auc": 0.651879127616712,
+        "average_precision": 0.1586935326695783,
+        "confusion_matrix": [
+          [
+            13577,
+            3048
+          ],
+          [
+            974,
+            657
+          ]
+        ]
+      },
+      "fold_metrics": [
+        {
+          "threshold": 0.08920684452426061,
+          "accuracy": 0.7566421707179197,
+          "precision": 0.36302895322939865,
+          "recall": 0.3614190687361419,
+          "f1": 0.3622222222222222,
+          "roc_auc": 0.6723582272437342,
+          "average_precision": 0.30977452237233816,
+          "confusion_matrix": [
+            [
+              4865,
+              858
+            ],
+            [
+              864,
+              489
+            ]
+          ]
+        },
+        {
+          "threshold": 0.08920684452426061,
+          "accuracy": 0.7942754919499105,
+          "precision": 0.07124681933842239,
+          "recall": 0.60431654676259,
+          "f1": 0.1274658573596358,
+          "roc_auc": 0.7657587743784059,
+          "average_precision": 0.09201416244827501,
+          "confusion_matrix": [
+            [
+              8712,
+              2190
+            ],
+            [
+              110,
+              168
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": {
+        "name": "catboost_d5_w1",
+        "family": "catboost",
+        "depth": 5,
+        "weight": 1
+      },
+      "rolling_validation": {
+        "threshold": 0.08811274706101088,
+        "accuracy": 0.79727212971078,
+        "precision": 0.19469026548672566,
+        "recall": 0.404659717964439,
+        "f1": 0.26289583748257317,
+        "roc_auc": 0.6587137740119767,
+        "average_precision": 0.17265818524829848,
+        "confusion_matrix": [
+          [
+            13895,
+            2730
+          ],
+          [
+            971,
+            660
+          ]
+        ]
+      },
+      "fold_metrics": [
+        {
+          "threshold": 0.08811274706101088,
+          "accuracy": 0.7874505370265686,
+          "precision": 0.4332449160035367,
+          "recall": 0.36215816703621584,
+          "f1": 0.394524959742351,
+          "roc_auc": 0.6983129367773273,
+          "average_precision": 0.3456636797581128,
+          "confusion_matrix": [
+            [
+              5082,
+              641
+            ],
+            [
+              863,
+              490
+            ]
+          ]
+        },
+        {
+          "threshold": 0.08811274706101088,
+          "accuracy": 0.8034883720930233,
+          "precision": 0.07525453740593183,
+          "recall": 0.6115107913669064,
+          "f1": 0.13401655498620418,
+          "roc_auc": 0.7768566654656461,
+          "average_precision": 0.11246561233361083,
+          "confusion_matrix": [
+            [
+              8813,
+              2089
+            ],
+            [
+              108,
+              170
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": {
+        "name": "catboost_d5_w4",
+        "family": "catboost",
+        "depth": 5,
+        "weight": 4
+      },
+      "rolling_validation": {
+        "threshold": 0.2838450444769164,
+        "accuracy": 0.8077892199824716,
+        "precision": 0.20415879017013233,
+        "recall": 0.39730226854690376,
+        "f1": 0.2697190426638918,
+        "roc_auc": 0.6726122725575434,
+        "average_precision": 0.17721266905788893,
+        "confusion_matrix": [
+          [
+            14099,
+            2526
+          ],
+          [
+            983,
+            648
+          ]
+        ]
+      },
+      "fold_metrics": [
+        {
+          "threshold": 0.2838450444769164,
+          "accuracy": 0.7894290559638214,
+          "precision": 0.4382326420198377,
+          "recall": 0.35920177383592017,
+          "f1": 0.39480097481722176,
+          "roc_auc": 0.7058749080970073,
+          "average_precision": 0.350131033779241,
+          "confusion_matrix": [
+            [
+              5100,
+              623
+            ],
+            [
+              867,
+              486
+            ]
+          ]
+        },
+        {
+          "threshold": 0.2838450444769164,
+          "accuracy": 0.8194096601073345,
+          "precision": 0.0784503631961259,
+          "recall": 0.5827338129496403,
+          "f1": 0.1382842509603073,
+          "roc_auc": 0.7793966257923766,
+          "average_precision": 0.11118617319448726,
+          "confusion_matrix": [
+            [
+              8999,
+              1903
+            ],
+            [
+              116,
+              162
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": {
+        "name": "catboost_d7_w1",
+        "family": "catboost",
+        "depth": 7,
+        "weight": 1
+      },
+      "rolling_validation": {
+        "threshold": 0.09703142390936575,
+        "accuracy": 0.8154579316389132,
+        "precision": 0.20661715057393654,
+        "recall": 0.37522992029429797,
+        "f1": 0.26649248856956237,
+        "roc_auc": 0.6636900651383211,
+        "average_precision": 0.17220582689880545,
+        "confusion_matrix": [
+          [
+            14275,
+            2350
+          ],
+          [
+            1019,
+            612
+          ]
+        ]
+      },
+      "fold_metrics": [
+        {
+          "threshold": 0.09703142390936575,
+          "accuracy": 0.7929621254946297,
+          "precision": 0.4448818897637795,
+          "recall": 0.3340724316334072,
+          "f1": 0.3815956099620093,
+          "roc_auc": 0.6992281892065818,
+          "average_precision": 0.3461602631337928,
+          "confusion_matrix": [
+            [
+              5159,
+              564
+            ],
+            [
+              901,
+              452
+            ]
+          ]
+        },
+        {
+          "threshold": 0.09703142390936575,
+          "accuracy": 0.829695885509839,
+          "precision": 0.08221993833504625,
+          "recall": 0.5755395683453237,
+          "f1": 0.14388489208633093,
+          "roc_auc": 0.7776534963553647,
+          "average_precision": 0.10741939739012903,
+          "confusion_matrix": [
+            [
+              9116,
+              1786
+            ],
+            [
+              118,
+              160
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": {
+        "name": "catboost_d7_w4",
+        "family": "catboost",
+        "depth": 7,
+        "weight": 4
+      },
+      "rolling_validation": {
+        "threshold": 0.255387931021207,
+        "accuracy": 0.7827015775635408,
+        "precision": 0.19263157894736843,
+        "recall": 0.4488044144696505,
+        "f1": 0.26956361627692876,
+        "roc_auc": 0.6735047920229758,
+        "average_precision": 0.1747779071161354,
+        "confusion_matrix": [
+          [
+            13557,
+            3068
+          ],
+          [
+            899,
+            732
+          ]
+        ]
+      },
+      "fold_metrics": [
+        {
+          "threshold": 0.255387931021207,
+          "accuracy": 0.7781232334652346,
+          "precision": 0.4189693801344287,
+          "recall": 0.4146341463414634,
+          "f1": 0.41679049034175336,
+          "roc_auc": 0.7061368146761703,
+          "average_precision": 0.3454996578604671,
+          "confusion_matrix": [
+            [
+              4945,
+              778
+            ],
+            [
+              792,
+              561
+            ]
+          ]
+        },
+        {
+          "threshold": 0.255387931021207,
+          "accuracy": 0.7855992844364937,
+          "precision": 0.06948394961397805,
+          "recall": 0.6151079136690647,
+          "f1": 0.1248630887185104,
+          "roc_auc": 0.7723812144560632,
+          "average_precision": 0.107277644968108,
+          "confusion_matrix": [
+            [
+              8612,
+              2290
+            ],
+            [
+              107,
+              171
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "selected_candidate": {
+    "name": "logistic_balanced",
+    "family": "logistic",
+    "class_weight": "balanced"
+  },
+  "selection_rule": "rolling_validation_f1_then_average_precision",
+  "baseline_test": {
+    "threshold": 0.08315501999121785,
+    "accuracy": 0.6788458438557842,
+    "precision": 0.048502382573179036,
+    "recall": 0.4247391952309985,
+    "f1": 0.08706277684435619,
+    "roc_auc": 0.6337987861508888,
+    "average_precision": 0.06122222178057587,
+    "confusion_matrix": [
+      [
+        12349,
+        5591
+      ],
+      [
+        386,
+        285
+      ]
+    ]
+  },
+  "candidate_test": {
+    "threshold": 0.6356438452043396,
+    "accuracy": 0.7776046424157756,
+    "precision": 0.05561250640697078,
+    "recall": 0.323397913561848,
+    "f1": 0.09490487644872075,
+    "roc_auc": 0.6292161983893987,
+    "average_precision": 0.06032152709730768,
+    "confusion_matrix": [
+      [
+        14255,
+        3685
+      ],
+      [
+        454,
+        217
+      ]
+    ]
+  },
+  "test_by_month": [
+    {
+      "month": "2018-06",
+      "rows": 6094,
+      "threshold": 0.6356438452043396,
+      "accuracy": 0.9063012799474893,
+      "precision": 0.050359712230215826,
+      "recall": 0.39436619718309857,
+      "f1": 0.08931419457735247,
+      "roc_auc": 0.7752254854045407,
+      "average_precision": 0.06216839858286325,
+      "confusion_matrix": [
+        [
+          5495,
+          528
+        ],
+        [
+          43,
+          28
+        ]
+      ]
+    },
+    {
+      "month": "2018-07",
+      "rows": 6021,
+      "threshold": 0.6356438452043396,
+      "accuracy": 0.7399103139013453,
+      "precision": 0.05795235028976175,
+      "recall": 0.46632124352331605,
+      "f1": 0.10309278350515463,
+      "roc_auc": 0.6224391093915028,
+      "average_precision": 0.066755756740212,
+      "confusion_matrix": [
+        [
+          4365,
+          1463
+        ],
+        [
+          103,
+          90
+        ]
+      ]
+    },
+    {
+      "month": "2018-08",
+      "rows": 6496,
+      "threshold": 0.6356438452043396,
+      "accuracy": 0.6918103448275862,
+      "precision": 0.05521472392638037,
+      "recall": 0.24324324324324326,
+      "f1": 0.09,
+      "roc_auc": 0.5160443592041556,
+      "average_precision": 0.06808276151850723,
+      "confusion_matrix": [
+        [
+          4395,
+          1694
+        ],
+        [
+          308,
+          99
+        ]
+      ]
+    }
+  ],
+  "test_short_promises": {
+    "rows": 1254,
+    "late_count": 212,
+    "threshold": 0.6356438452043396,
+    "accuracy": 0.803030303030303,
+    "precision": 0.23880597014925373,
+    "recall": 0.07547169811320754,
+    "f1": 0.11469534050179211,
+    "roc_auc": 0.5702703436787021,
+    "average_precision": 0.2074355446972598,
+    "confusion_matrix": [
+      [
+        991,
+        51
+      ],
+      [
+        196,
+        16
+      ]
+    ]
+  },
+  "test_is_blind": false,
+  "old_timestamp_metrics_comparable": false,
+  "limitations": [
+    "New target and as-of split; do not compare these metrics as direct gains over v1/v2.",
+    "Existing data has been inspected previously; a future untouched sample is still required.",
+    "Delivered-only population and conservative label finalization; no unresolved/cancelled classification.",
+    "Operational costs were not supplied; threshold maximizes rolling validation F1.",
+    "Final refit uses all outcomes known before test start, including mature validation outcomes.",
+    "Item/product/seller attributes are assumed available at approval; historical attribute snapshots are unavailable."
+  ],
+  "bundle_sha256": "4602e7e19dac3ff6ff538fae6c9d9c6376ad589f618955f49ea0a10179fbf9fb",
+  "naive_constant_test": {
+    "threshold": 0.5,
+    "accuracy": 0.9639460534092741,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "roc_auc": 0.5,
+    "average_precision": 0.036053946590725916,
+    "confusion_matrix": [
+      [
+        17940,
+        0
+      ],
+      [
+        671,
+        0
+      ]
+    ]
+  }
+}

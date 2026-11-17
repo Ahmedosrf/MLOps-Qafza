@@ -1,0 +1,47 @@
+schema: '2.0'
+stages:
+  inference_bundle:
+    cmd: python -c "import sys, os; sys.path.insert(0, '..'); os.environ['DVC_MODEL_PATH']='models/06_inference_bundle.joblib';
+      from Task3.src.model_registry_export import export_bundle; export_bundle()"
+    deps:
+    - path: ../Task2/artifacts/models/06_inference_bundle.joblib
+      hash: md5
+      md5: f6684a434f84d4f8a9e794b72ce96dc1
+      size: 639414
+    - path: ../Task2/src/corrected_data.py
+      hash: md5
+      md5: df361447fcca5c12851187c6ad9efb8b
+      size: 6064
+    - path: ../Task2/src/corrected_training.py
+      hash: md5
+      md5: 94d06d87a0fa9ee698d9bc8be964f430
+      size: 13674
+    - path: requirements.txt
+      hash: md5
+      md5: cace85639ed3faf013c27e9e90742ff6
+      size: 299
+    - path: src/contract.py
+      hash: md5
+      md5: c35fd54af4fd13d8389eb0eb551671f0
+      size: 310
+    - path: src/feature_builder.py
+      hash: md5
+      md5: 3e6693f7341bb38a6c4d69d7b89dcef0
+      size: 5337
+    - path: src/geographic.py
+      hash: md5
+      md5: d01db41ff80dd76bfde010483bc240b3
+      size: 2475
+    - path: src/model_loader.py
+      hash: md5
+      md5: 00e3e4bf7dd6da46e638c1e5b6f8bd3f
+      size: 6229
+    - path: src/model_registry_export.py
+      hash: md5
+      md5: 80d8405cfa9587e833083d8637efc897
+      size: 2968
+    outs:
+    - path: models/06_inference_bundle.joblib
+      hash: md5
+      md5: f6684a434f84d4f8a9e794b72ce96dc1
+      size: 639414

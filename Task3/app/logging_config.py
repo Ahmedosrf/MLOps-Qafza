@@ -14,7 +14,6 @@ def configure_logging() -> None:
     level_name = os.getenv("LOG_LEVEL", "INFO").upper()
     level = getattr(logging, level_name, logging.INFO)
     log_path = Path(os.getenv("LOG_FILE_PATH", "Task3/logs/api.log"))
-    log_path.parent.mkdir(parents=True, exist_ok=True)
 
     formatter = logging.Formatter(
         "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
@@ -22,6 +21,7 @@ def configure_logging() -> None:
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     try:
+        log_path.parent.mkdir(parents=True, exist_ok=True)
         file_handler = RotatingFileHandler(
             log_path, maxBytes=5_000_000, backupCount=3, encoding="utf-8"
         )

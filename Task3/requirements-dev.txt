@@ -7,3 +7,7 @@ ruff==0.9.10
 black==25.1.0
 pre-commit==4.1.0
 dvc==3.59.1
+
+
+# DVC 3.59 relies on pathspec internals removed in 1.x.
+pathspec==0.12.1

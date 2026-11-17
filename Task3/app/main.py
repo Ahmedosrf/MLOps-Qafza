@@ -6,6 +6,7 @@ from time import perf_counter
 from fastapi import FastAPI
 from fastapi import Request
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 
 from Task3.app.logging_config import configure_logging
 from Task3.app.metrics import ERROR_COUNT, REQUEST_COUNT, REQUEST_LATENCY
@@ -62,3 +63,12 @@ async def unexpected_error_handler(request: Request, exc: Exception):
         status_code=500,
         content={"detail": "Internal prediction service error"},
     )
+
+
+@app.exception_handler(RequestValidationError)
+async def invalid_request_handler(request: Request, exc: RequestValidationError):
+    """Avoid echoing non-finite input values into a strict JSON response."""
+    errors = [
+        {key: error[key] for key in ("type", "loc", "msg")} for error in exc.errors()
+    ]
+    return JSONResponse(status_code=422, content={"detail": errors})
