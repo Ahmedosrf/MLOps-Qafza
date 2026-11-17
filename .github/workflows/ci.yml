@@ -41,20 +41,38 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Check for local model bundle
-        id: model
-        shell: bash
-        run: |
-          if [ -f Task2/artifacts/models/06_inference_bundle.joblib ]; then
-            echo "available=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "available=false" >> "$GITHUB_OUTPUT"
-          fi
+      - name: Install runtime dependencies
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-      - name: Build Docker image when the model bundle is available
-        if: steps.model.outputs.available == 'true'
+      - run: python -m pip install -r Task3/requirements.txt
+
+      - name: Create fitted synthetic bundle for image smoke test only
+        run: python -m Task3.tests.ci_bundle Task3/models/06_inference_bundle.joblib
+
+      - name: Build API image
         run: docker build -f Task3/Dockerfile -t olist-late-delivery-api:ci .
 
-      - name: Explain skipped Docker build
-        if: steps.model.outputs.available != 'true'
-        run: echo "Docker build skipped because the private model bundle is not in Git."
+      - name: Smoke test non-root container and prediction endpoints
+        shell: bash
+        run: |
+          docker run -d --name api -p 8000:8000 olist-late-delivery-api:ci
+          trap 'docker logs api; docker rm -f api' EXIT
+          test "$(docker exec api id -u)" = "10001"
+          python - <<'PYTHON'
+          import json, time, urllib.request
+          from Task3.tests.ci_bundle import ORDER
+          for attempt in range(60):
+              try:
+                  urllib.request.urlopen('http://localhost:8000/ready', timeout=2)
+                  break
+              except Exception:
+                  time.sleep(1)
+          else:
+              raise RuntimeError('Container never became ready')
+          request = urllib.request.Request('http://localhost:8000/predict', data=json.dumps(ORDER).encode(), headers={'Content-Type': 'application/json'})
+          result = json.load(urllib.request.urlopen(request, timeout=10))
+          assert result['model_version'] == 'ci-synthetic-only'
+          assert 0 <= result['probability'] <= 1
+          PYTHON

@@ -259,7 +259,7 @@ The Task 2 pipeline stores intermediate outputs in separate artifact categories:
 
 ### Task 3 — Completed production foundations
 
-Task 3 serves the fitted Task 2 bundle through FastAPI without retraining. It includes request validation, leakage-safe prediction-time feature construction, model metadata, batch inference, Prometheus metrics, structured logs, Docker Compose, MLflow with PostgreSQL and MinIO, DVC handoff metadata, Great Expectations integration, and GitHub Actions quality checks. The model binary remains outside Git and must be supplied through the documented local artifact, DVC remote, or artifact-store workflow.
+Task 3 serves the fitted Task 2 bundle through FastAPI without retraining. It includes request validation, leakage-safe prediction-time feature construction, model metadata, batch inference, Prometheus metrics, structured logs, Docker Compose, MLflow with PostgreSQL and MinIO, DVC initialization and handoff pipeline, Great Expectations integration, and GitHub Actions quality checks. The model binary remains outside Git and must be supplied through the documented local artifact, DVC remote, or artifact-store workflow.
 
 ## Validation Philosophy
 
@@ -346,3 +346,4 @@ The Olist dataset should be used and redistributed according to the terms and at
 This repository is an educational MLOps training project. The code and workflows are intended for learning, experimentation, and reproducibility practice. They should be reviewed and adapted before being used in a production environment.
 
 The recorded metrics and validation results describe the execution captured in the project. They may change if the source data, filtering rules, feature policy, split strategy, or model configuration changes.
+

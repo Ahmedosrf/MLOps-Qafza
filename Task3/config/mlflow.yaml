@@ -9,4 +9,5 @@ model_version: task2-v1
 
 # The service keeps MODEL_BUNDLE_PATH as a local fallback for the current
 # handoff. After registering the bundle, set MODEL_SOURCE=mlflow and provide
-# MODEL_URI= models:/olist-late-delivery/Production.
+# MODEL_URI=models:/olist-late-delivery/<reviewed-version>.
+

@@ -5,6 +5,9 @@ from __future__ import annotations
 from typing import Any
 
 import pandas as pd
+import numpy as np
+
+from .dates import local_order_dates
 
 REQUIRED_COLUMNS = {
     "order_purchase_timestamp",
@@ -66,7 +69,10 @@ def validate_prediction_frame(frame: pd.DataFrame) -> None:
         raise ValueError("prediction input contains missing values")
 
     for column in NON_NEGATIVE_COLUMNS:
-        if (pd.to_numeric(frame[column], errors="coerce") < 0).any():
+        numeric = pd.to_numeric(frame[column], errors="coerce")
+        if not np.isfinite(numeric.to_numpy(dtype=float)).all():
+            raise ValueError(f"{column} must contain finite numeric values")
+        if (numeric < 0).any():
             raise ValueError(f"{column} must be non-negative")
 
     for column in POSITIVE_COUNT_COLUMNS:
@@ -83,7 +89,7 @@ def validate_prediction_frame(frame: pd.DataFrame) -> None:
         "order_estimated_delivery_date",
         "order_approved_at",
     ):
-        if pd.to_datetime(frame[column], errors="coerce").isna().any():
+        if local_order_dates(frame[column]).isna().any():
             raise ValueError(f"{column} contains an invalid date")
 
 

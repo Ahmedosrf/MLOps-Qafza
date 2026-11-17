@@ -32,3 +32,5 @@ Task2/artifacts/*
 Task3/logs/
 Task3/.env
 Task3/models/*.joblib
+!Task3/models/06_inference_bundle.joblib
+

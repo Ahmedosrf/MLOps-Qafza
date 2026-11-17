@@ -59,7 +59,7 @@ Machine-specific paths, credentials, and thresholds must not be embedded in appl
 
 ## Verification
 
-The local verification completed successfully with Ruff, Black, and 22 Pytest tests. Docker Compose was also verified with FastAPI, PostgreSQL, MLflow, and MinIO running together; `/health`, `/model/info`, `/predict`, and `/metrics` returned successfully. GitHub Actions validates the code and tests on every push. The Docker build step is skipped in GitHub Actions when the private model bundle is absent from the checkout.
+Automated tests include serialized sklearn inference, readiness failures, invalid numeric values, timestamp normalization, MLflow registry round trips, and DVC publish/restore. CI always builds a container with an explicitly synthetic fitted bundle, checks its non-root user, and calls readiness and prediction endpoints. This verifies integration, not the accuracy of the real Olist model.
 
 ## Environment requirement
 
@@ -99,7 +99,7 @@ uvicorn Task3.app.main:app --reload
 
 ## Docker execution
 
-Build from the repository root after Task 2 has produced the local inference bundle:
+Build from the repository root after Task 2 has produced the local inference bundle. Activate the Python environment, then run `dvc repro Task3/dvc.yaml` to export the validated bundle to `Task3/models/06_inference_bundle.joblib` first:
 
 ```powershell
 cd C:\Users\HP\Desktop\MLOps
@@ -114,15 +114,37 @@ cd C:\Users\HP\Desktop\MLOps\Task3
 docker-compose up --build
 ```
 
-The Compose stack contains the API, MLflow tracking server, PostgreSQL backend, MinIO artifact storage, and API logs. The API image copies the current Task 2 bundle from the local artifact path; `src/model_registry_export.py` logs the same fitted bundle to MLflow without refitting. Raw CSV files and generated reports remain excluded from the image. For a clean clone, provide the bundle through DVC or another artifact store before building the API image.
+The Compose stack contains the API, MLflow tracking server, PostgreSQL backend, MinIO artifact storage, and API logs. The API image copies the exported, versioned bundle from `Task3/models/06_inference_bundle.joblib`; `src/model_registry_export.py` logs the same fitted bundle to MLflow without refitting. Raw CSV files and generated reports remain excluded from the image. For a clean clone, provide the bundle through DVC or another artifact store before building the API image.
 
 ## Continuous integration
 
-The repository workflow at `.github/workflows/ci.yml` runs Ruff, Black, and the Task 3 test suite on every push to `main` and every pull request targeting `main`. A Docker build job runs when the model artifact is present in the checkout; the current bundle is intentionally excluded from Git, so the remote build is skipped until a registry-backed model download is configured. Pre-commit applies the same Ruff and Black checks before a local commit.
+The workflow runs Ruff, Black and the test suite on pushes to `main` and pull requests. It always builds the API image using a fitted synthetic test bundle and checks the container user, `/ready`, and `/predict`. CI-generated bundles are never published as production artifacts. Real model acceptance still requires testing the version restored from the configured artifact store.
 
 ## Data validation and versioning
 
-`src/validation.py` rejects missing columns, null values, negative numeric values, invalid counts, malformed state codes, and invalid dates before the model is called. `OrderPayload` explicitly requires `seller_state` and rejects undeclared fields. `src/gx_validator.py` runs the same contract through Great Expectations. The expectation definitions are documented in `config/great_expectations.yml`. DVC metadata is initialized at the repository root, and `Task3/dvc.yaml` describes the handoff stage that copies the Task 2 bundle into a versionable Task 3 model path. Configure a remote with `dvc remote add` before pushing the model cache to shared storage.
+`src/validation.py` rejects missing fields, nulls, non-numeric and non-finite numbers, invalid counts, malformed state codes and invalid dates. Pydantic rejects non-finite floats; validation responses exclude raw input so invalid JSON numbers cannot cause a secondary 500. Naive Olist timestamps mean Sao Paulo local wall-clock time. Zoned timestamps convert to that clock before feature extraction. Task 2 Notebook 5 imports the same feature builder as serving.
+
+DVC is initialized in `.dvc/`. From the repository root, in the activated environment:
+
+```bash
+# After generating the real Task 2 bundle:
+dvc repro Task3/dvc.yaml
+# Configure YOUR existing artifact store (credentials belong in --local config).
+dvc remote add --local -d artifacts /path/to/shared/artifact-store
+dvc push Task3/dvc.yaml
+git add Task3/dvc.lock
+git commit -m "Version the trained inference bundle"
+```
+
+A local filesystem remote needs no extra backend. For S3 install `dvc[s3]==3.59.1` and configure your bucket and credentials locally. In another checkout with that committed lock file and access to the same remote:
+
+```bash
+dvc remote add --local -d artifacts /path/to/shared/artifact-store
+dvc pull Task3/dvc.yaml
+docker build -f Task3/Dockerfile -t olist-late-delivery-api:task3-v1 .
+```
+
+`dvc.lock` must be generated from the real bundle; this repository does not ship a fabricated checksum or a production model generated from CI fixtures. Pulling needs the lock and remote access; merely cloning the source cannot reconstruct private artifacts.
 
 ## MLflow and artifact storage
 
@@ -130,11 +152,20 @@ The Compose stack starts MLflow with PostgreSQL as its backend store and MinIO a
 
 ```powershell
 $env:MLFLOW_TRACKING_URI = "http://localhost:5000"
+$env:MLFLOW_S3_ENDPOINT_URL = "http://localhost:9000"
+$env:AWS_ACCESS_KEY_ID = "minioadmin"
+$env:AWS_SECRET_ACCESS_KEY = "minioadmin"
 python -m Task3.src.model_registry_export
 ```
 
-The helper records the model version, threshold, feature count, source notebook, and Production tag. It never fits a model. MLflow is available at `http://127.0.0.1:5000`, and MinIO's console is available at `http://127.0.0.1:9001`.
+The helper records metadata and creates an actual registered MLflow pyfunc model version containing the fitted bundle and serving code. It does not automatically promote a version to Production. To serve a reviewed version, set `MODEL_SOURCE=mlflow`, `MODEL_URI=models:/olist-late-delivery/<version>` and the tracking/S3 connection variables, then restart the API to clear its process-local cache. Local mode remains `MODEL_SOURCE=local` with `MODEL_BUNDLE_PATH`. These variables are read from the process environment; YAML files and `.env.example` are documentation, not automatically loaded configuration. It never refits a model. MLflow is available at `http://127.0.0.1:5000`, and MinIO's console is available at `http://127.0.0.1:9001`.
 
 ## Monitoring and logs
 
 Prometheus-format metrics are available at `http://127.0.0.1:8000/metrics`. The service exposes request count, request latency, unexpected-error count, and prediction count by class and model version. API logs and prediction events are written to `Task3/logs` locally or the Compose `api_logs` volume. Alert candidates are sustained 5xx errors, p95 latency above the agreed service target, and a sudden change in the `late` prediction ratio; actual delivery outcomes should be joined later to calculate drift and realized performance.
+
+
+
+## Readiness and container permissions
+
+`/live` reports process liveness. `/ready` and `/health` load and validate the cached model bundle, including fitted sklearn objects and feature order, and return 503 when it cannot be used. Compose probes `/ready` and runs as UID 10001. New log volumes inherit the image directory ownership. If an older volume was created by root, stop the API and fix ownership once using `docker compose run --rm --user 0 --no-deps --entrypoint chown api -R 10001:10001 /app/Task3/logs`, then start it normally. Do not delete an existing log volume to fix permissions. Model changes require a service restart.

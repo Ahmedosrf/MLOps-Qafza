@@ -125,10 +125,8 @@ def test_prediction_service_rejects_wrong_transformed_shape():
 def test_prediction_service_rejects_model_without_predict_proba():
     invalid = bundle_dict()
     invalid["model"] = ModelWithoutProbability()
-    service = PredictionService(load_inference_bundle_from_dict(invalid))
-
     with pytest.raises(TypeError, match="predict_proba"):
-        service.predict_one(VALID_ORDER)
+        load_inference_bundle_from_dict(invalid)
 
 
 def test_prediction_service_rejects_multiple_rows_for_single_prediction():

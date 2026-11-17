@@ -8,6 +8,7 @@ from time import perf_counter
 from typing import Any
 
 import pandas as pd
+import math
 
 from Task3.app.metrics import PREDICTION_COUNT
 
@@ -61,7 +62,14 @@ class PredictionService:
         if not hasattr(self.bundle.model, "predict_proba"):
             raise TypeError("Loaded model must provide predict_proba")
 
-        probability = float(self.bundle.model.predict_proba(transformed)[0][1])
+        classes = list(getattr(self.bundle.model, "classes_", [0, 1]))
+        if set(classes) != {0, 1}:
+            raise RuntimeError("Loaded model must classify on_time=0 and late=1")
+        probability = float(
+            self.bundle.model.predict_proba(transformed)[0][classes.index(1)]
+        )
+        if not math.isfinite(probability) or not 0 <= probability <= 1:
+            raise RuntimeError("Model returned an invalid probability")
         is_late = int(probability >= self.bundle.threshold)
         latency_ms = (perf_counter() - started) * 1000
 

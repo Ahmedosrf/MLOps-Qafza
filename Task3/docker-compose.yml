@@ -4,7 +4,6 @@ services:
       context: ..
       dockerfile: Task3/Dockerfile
     image: olist-late-delivery-api:task3-v1
-    user: "0:0"
     ports:
       - "8000:8000"
     environment:
@@ -30,7 +29,7 @@ services:
         - -c
         - >-
           import urllib.request;
-          urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)
+          urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=3)
       interval: 30s
       timeout: 5s
       retries: 3
@@ -96,3 +95,4 @@ volumes:
   postgres_data:
   minio_data:
   api_logs:
+

@@ -9,6 +9,8 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from .dates import local_order_dates
+
 
 POST_OUTCOME_COLUMNS = (
     "order_delivered_carrier_date",
@@ -57,7 +59,7 @@ def build_prediction_features(frame: pd.DataFrame) -> pd.DataFrame:
 
     for column in DATE_COLUMNS:
         if column in features.columns:
-            features[column] = pd.to_datetime(features[column], errors="coerce")
+            features[column] = local_order_dates(features[column])
 
     purchase_time = features.get("order_purchase_timestamp")
     if purchase_time is not None:
