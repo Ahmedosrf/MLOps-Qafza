@@ -35,10 +35,10 @@ def test_ready_and_inference_use_serialized_sklearn_objects(runtime):
     assert client.get("/health").json()["model_version"] == "ci-synthetic-only"
     result = client.post("/predict", json=ORDER)
     assert result.status_code == 200
-    from Task3.src.feature_builder import build_prediction_features
+    from Task3.src.feature_builder import build_corrected_prediction_features
 
     x = bundle["preprocessor"].transform(
-        build_prediction_features(pd.DataFrame([ORDER]))
+        build_corrected_prediction_features(pd.DataFrame([ORDER]))
     )
     assert result.json()["probability"] == pytest.approx(
         bundle["model"].predict_proba(x)[0, 1]

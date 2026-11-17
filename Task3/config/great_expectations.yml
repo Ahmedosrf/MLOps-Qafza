@@ -15,12 +15,17 @@ required_columns:
   - avg_product_weight_g
   - avg_product_photos_qty
   - seller_state_count
-  - payment_record_count
-  - total_payment_value
-  - max_payment_installments
   - seller_state
 rules:
   state_code_length: 2
   non_negative_numeric: true
   positive_count_fields: true
   missing_values_allowed: false
+
+optional_legacy_columns:
+  - payment_record_count
+  - total_payment_value
+  - max_payment_installments
+feature_policy: calendar-day-v3
+target_definition: late_after_estimated_calendar_day
+prediction_stage: after_approval

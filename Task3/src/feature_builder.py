@@ -135,3 +135,33 @@ __all__ = [
     "POST_OUTCOME_COLUMNS",
     "build_prediction_features",
 ]
+
+
+def build_corrected_prediction_features(frame: pd.DataFrame) -> pd.DataFrame:
+    """Calendar-day v3: approval-stage inputs, no untimed payments or absolute calendar."""
+    from .contract import PAYMENT_FIELDS
+
+    clean = frame.drop(
+        columns=[*PAYMENT_FIELDS, "prediction_at", "label_available_at"],
+        errors="ignore",
+    )
+    features = build_prediction_features(clean)
+    purchase = local_order_dates(frame["order_purchase_timestamp"])
+    approval = local_order_dates(frame["order_approved_at"])
+    due_end = local_order_dates(
+        frame["order_estimated_delivery_date"]
+    ).dt.normalize() + pd.Timedelta(days=1)
+    # Exclusive next midnight is the end of the promised calendar day.
+    features["estimated_window_days"] = (due_end - purchase).dt.total_seconds() / 86400
+    features["remaining_window_days_at_approval"] = (
+        due_end - approval
+    ).dt.total_seconds() / 86400
+    return features.drop(
+        columns=[
+            "purchase_year",
+            "purchase_month",
+            "purchase_weekofyear",
+            "payment_price_difference",
+        ],
+        errors="ignore",
+    )

@@ -98,6 +98,8 @@ def test_model_info_route_returns_bundle_metadata():
         "model_version": "task2-v1",
         "threshold": 0.3,
         "feature_count": 2,
+        "target_definition": None,
+        "prediction_stage": None,
     }
 
 

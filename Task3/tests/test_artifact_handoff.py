@@ -19,6 +19,11 @@ def test_dvc_publish_and_restore(tmp_path):
             repo / directory,
             ignore=shutil.ignore_patterns("__pycache__", "logs", "*.joblib"),
         )
+    shutil.copytree(
+        root / "Task2/src",
+        repo / "Task2/src",
+        ignore=shutil.ignore_patterns("__pycache__"),
+    )
     (repo / "Task2/artifacts/models").mkdir(parents=True)
     make_bundle(repo / "Task2/artifacts/models/06_inference_bundle.joblib")
     subprocess.run(["git", "init", "-q", str(repo)], check=True)

@@ -107,6 +107,18 @@ def _validate_bundle(raw_bundle: dict[str, Any]) -> InferenceBundle:
     if hasattr(model, "classes_") and set(model.classes_) != {0, 1}:
         raise ValueError("Loaded model must classify on_time=0 and late=1")
 
+    metadata = dict(raw_bundle.get("feature_metadata", {}))
+    if metadata.get("feature_policy") is not None:
+        from .contract import FEATURE_POLICY, TARGET_DEFINITION, PREDICTION_STAGE
+
+        if metadata["feature_policy"] != FEATURE_POLICY:
+            raise ValueError("Unsupported feature policy")
+        if (
+            metadata.get("target_definition") != TARGET_DEFINITION
+            or metadata.get("prediction_stage") != PREDICTION_STAGE
+        ):
+            raise ValueError("Bundle target/prediction-stage contract mismatch")
+
     return InferenceBundle(
         model=raw_bundle["model"],
         preprocessor=raw_bundle["preprocessor"],

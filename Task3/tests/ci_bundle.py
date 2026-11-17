@@ -7,7 +7,8 @@ import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.linear_model import LogisticRegression
-from Task3.src.feature_builder import build_prediction_features
+from Task3.src.feature_builder import build_corrected_prediction_features
+from Task3.src.contract import FEATURE_POLICY, TARGET_DEFINITION, PREDICTION_STAGE
 
 ORDER = {
     "order_purchase_timestamp": "2018-01-06 10:30:00",
@@ -34,7 +35,7 @@ ORDER = {
 
 def make_bundle(path):
     rows = [{**ORDER, "total_price": float(price)} for price in range(20, 220, 10)]
-    features = build_prediction_features(pd.DataFrame(rows))
+    features = build_corrected_prediction_features(pd.DataFrame(rows))
     numeric = features.select_dtypes(include=np.number).columns.tolist()
     categorical = [name for name in features if name not in numeric]
     preprocessor = ColumnTransformer(
@@ -52,6 +53,11 @@ def make_bundle(path):
         threshold=0.5,
         model_name="ci-synthetic-only",
         model_version="ci-synthetic-only",
+        feature_metadata={
+            "feature_policy": FEATURE_POLICY,
+            "target_definition": TARGET_DEFINITION,
+            "prediction_stage": PREDICTION_STAGE,
+        },
     )
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(bundle, path)

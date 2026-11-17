@@ -31,7 +31,7 @@ Run `notebooks/Task01.ipynb` from top to bottom. It performs the following steps
 3. Loads the CSV files into relational tables.
 4. Verifies the tables, row counts, and schema.
 5. Tests joins between orders, customers, items, products, sellers, and payments.
-6. Calculates the delivered, late, and on-time order summary.
+6. Calculates delivered/late/on-time summaries using local calendar dates (same-day arrival is on time).
 7. Runs the final Task 1 completion check.
 
 The notebook reads raw CSV files from the configured data directory and expects the PostgreSQL database `olist` to be available on `localhost:5432` with the default user `postgres`. Paths and connection settings are loaded through `src/config.py`, so the notebook does not depend on a fixed computer path or a password embedded in source code. Set the password without writing it into the notebook:
@@ -70,3 +70,4 @@ Task 1 is a data-ingestion and database-foundation task. Full EDA, cleaning, fea
 ## Official dataset
 
 https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
+

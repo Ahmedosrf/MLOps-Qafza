@@ -17,7 +17,11 @@ import pandas as pd
 from sklearn.metrics import brier_score_loss
 
 from Task2.src.improve_model import metrics, seller_states
-from Task3.src.feature_builder import build_prediction_features
+from Task3.src.feature_builder import (
+    build_prediction_features,
+    build_corrected_prediction_features,
+)
+from Task3.src.contract import FEATURE_POLICY
 from Task3.src.model_loader import find_project_root
 
 
@@ -69,13 +73,20 @@ def diagnose(root: Path, output: Path) -> dict:
     artifacts = root / "Task2/artifacts"
     bundle_path = artifacts / "models/06_inference_bundle.joblib"
     bundle = joblib.load(bundle_path)
+    corrected = (
+        bundle.get("feature_metadata", {}).get("feature_policy") == FEATURE_POLICY
+    )
+    tables = artifacts / "corrected/tables" if corrected else artifacts / "tables"
+    builder = (
+        build_corrected_prediction_features if corrected else build_prediction_features
+    )
     states = seller_states(root / "Task1/data")
     frames, raw_features, split_results = {}, {}, {}
     reference_prevalence = None
     for name in ("train", "validation", "test"):
-        frame = pd.read_parquet(artifacts / f"tables/03_{name}.parquet")
+        frame = pd.read_parquet(tables / f"03_{name}.parquet")
         frame["seller_state"] = frame["order_id"].map(states)
-        features = build_prediction_features(frame)
+        features = builder(frame)
         x = bundle["preprocessor"].transform(features)
         probabilities = bundle["model"].predict_proba(x)[:, 1]
         frame["probability"] = probabilities
@@ -142,7 +153,7 @@ def diagnose(root: Path, output: Path) -> dict:
         sensitivity["calendar_late"] = calendar_late.astype(int)
         sensitivity_frames[name] = sensitivity
         labels[name] = {
-            "timestamp_late_count": int(frame.is_late.sum()),
+            "timestamp_late_count": int((actual > due).sum()),
             "calendar_day_late_count": int(calendar_late.sum()),
             "same_due_day_flagged_late": int(same_day_flagged_late.sum()),
             "due_midnight_fraction": float((due == due.dt.normalize()).mean()),
@@ -209,7 +220,12 @@ def diagnose(root: Path, output: Path) -> dict:
         [
             {"feature": name, "importance": float(value)}
             for name, value in zip(
-                bundle["feature_names"], bundle["model"].feature_importances_
+                bundle["feature_names"],
+                getattr(
+                    bundle["model"],
+                    "feature_importances_",
+                    [],
+                ),
             )
         ],
         key=lambda row: row["importance"],

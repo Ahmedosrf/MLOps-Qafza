@@ -1,178 +1,83 @@
-# Task 3 — From Notebooks to Production
+# Task 3 — Versioned calendar-day inference
 
-Task 3 converts the trained Olist late-delivery pipeline into a reproducible inference service. Training remains in Task 2. The service loads the fitted model bundle and preprocessor, validates new orders, exposes predictions through FastAPI, and provides tests, containers, CI/CD, artifact tracking, and monitoring foundations without retraining.
+Current bundle: `task2-v3-calendar-day`, experimental, **not production-ready**. The corrected target means delivery after the estimated local calendar date; same-day arrival is on time. Prediction is after approval. Full model/data results: [corrected experiment](../Task2/docs/CORRECTED_EXPERIMENT.md).
 
-## Current stage
+## Local setup
 
-The repository structure and portable configuration are in place. The reusable `src/feature_builder.py` module mirrors Task 2 Notebook 5's prediction-time feature policy. The `src/model_loader.py` and `src/predictor.py` modules load the fitted bundle and apply the saved preprocessor and threshold without retraining. FastAPI exposes `/`, `/health`, `/model/info`, `/predict`, `/predict/batch`, and `/metrics`. The service validates inputs, writes console and rotating-file logs, stores prediction events as JSONL, and exposes Prometheus counters and latency histograms. MLflow, PostgreSQL, MinIO, DVC, Great Expectations, Docker Compose, pre-commit, and CI quality checks are configured. Training remains in Task 2; Task 3 only performs inference.
-
-## Planned structure
-
-```text
-Task3/
-├── app/                    # FastAPI application and route definitions
-│   ├── schemas.py          # Request and response validation
-│   ├── logging_config.py   # Safe application logging
-│   └── routes/
-│       ├── root.py         # Service information route
-│       └── predictions.py  # Single and batch prediction routes
-├── config/                 # Runtime configuration and data expectations
-├── data/                   # Local validation samples only; no raw dataset
-├── models/                 # Model handoff instructions; generated models stay local
-├── notebooks/              # Optional comparison notebook only; no training here
-├── src/                    # Inference, validation, logging, and monitoring modules
-│   ├── feature_builder.py  # Task 2-compatible prediction-time features
-│   ├── model_loader.py     # Fitted bundle loading and validation
-│   └── predictor.py        # Prediction result contract
-├── tests/                  # Unit, data, model, and API integration tests
-│   ├── test_feature_builder.py
-│   ├── test_prediction_service.py
-│   └── test_api_integration.py
-├── .env.example
-├── Dockerfile
-├── docker-compose.yml
-├── pyproject.toml
-├── requirements.txt
-├── requirements-dev.txt
-└── README.md
-```
-
-## Source of the model
-
-The service will consume the bundle produced by Task 2:
-
-```text
-Task2/artifacts/models/06_inference_bundle.joblib
-```
-
-The bundle contains the fitted classifier, fitted preprocessor, feature names, threshold, metadata, and model version. The service must call `transform`, never `fit` or `fit_transform`, for incoming requests.
-
-## Prediction request contract
-
-`POST /predict` requires the complete order-level feature set used by Task 2. In addition to purchase and delivery-estimate timestamps, each request must provide customer location, item and product counts, price and freight totals, product aggregates, seller aggregates, and payment aggregates. The required fields are `customer_zip_code_prefix`, `customer_city`, `customer_state`, `seller_state`, `num_items`, `num_distinct_products`, `total_price`, `total_freight`, `num_sellers`, `num_product_categories`, `avg_product_weight_g`, `avg_product_photos_qty`, `seller_state_count`, `payment_record_count`, `total_payment_value`, and `max_payment_installments`. This prevents a request with only a few convenient fields from reaching the fitted preprocessor with missing columns.
-
-The API does not invent these aggregates. A future client or upstream data-preparation step must calculate them from the same order-level tables and aggregation rules used in Task 2 Notebook 1. Post-delivery fields and review information remain prohibited. The seller location fields include both `seller_state` (the representative seller state) and `seller_state_count` (the number of distinct seller states); both are required by the fitted preprocessor.
-
-## Configuration principles
-
-Machine-specific paths, credentials, and thresholds must not be embedded in application code. Runtime values are read from environment variables or `config/config.yaml`. Secrets belong in a local `.env` file, which is ignored by Git. `.env.example` documents variable names without containing real credentials.
-
-## Verification
-
-Automated tests include serialized sklearn inference, readiness failures, invalid numeric values, timestamp normalization, MLflow registry round trips, and DVC publish/restore. CI always builds a container with an explicitly synthetic fitted bundle, checks its non-root user, and calls readiness and prediction endpoints. This verifies integration, not the accuracy of the real Olist model.
-
-## Environment requirement
-
-Use **Python 3.11, 3.12, or 3.13** for this task. The pinned scientific packages are intentionally aligned with the Task 2 training environment so that the saved scikit-learn/joblib bundle can be loaded reproducibly. The current Task 2 bundle was trained with **scikit-learn 1.8.0**, so Task 3 pins the same version. Python 3.14 may cause Pip to build older NumPy versions from source on Windows, which requires a C/C++ compiler and can fail before installation. Do not change the scikit-learn version independently of the training artifact.
-
-On Windows, create and activate a dedicated environment with Python 3.11:
-
-```powershell
-py -3.11 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-python -m pip install -r .\Task3\requirements-dev.txt
-```
-
-If the environment was already installed with an older scikit-learn version, update it before starting Uvicorn:
-
-```powershell
-python -m pip install --upgrade --force-reinstall scikit-learn==1.8.0
-```
-
-If `py -3.11` is not available, install Python 3.11 from [python.org](https://www.python.org/downloads/) and enable the Python Launcher during installation. Then run the commands above again.
-
-The completed task supports running tests from the `Task3` directory:
-
-```powershell
-cd C:\Users\HP\Desktop\MLOps\Task3
-pytest -q
-```
-
-From the repository root, use:
-
-```powershell
-cd C:\Users\HP\Desktop\MLOps
-python -m pytest -q Task3\tests
-uvicorn Task3.app.main:app --reload
-```
-
-## Docker execution
-
-Build from the repository root after Task 2 has produced the local inference bundle. Activate the Python environment, then run `dvc repro Task3/dvc.yaml` to export the validated bundle to `Task3/models/06_inference_bundle.joblib` first:
-
-```powershell
-cd C:\Users\HP\Desktop\MLOps
-docker build -f Task3\Dockerfile -t olist-late-delivery-api:task3-v1 .
-docker run --rm -p 8000:8000 olist-late-delivery-api:task3-v1
-```
-
-Or use Compose:
-
-```powershell
-cd C:\Users\HP\Desktop\MLOps\Task3
-docker-compose up --build
-```
-
-The Compose stack contains the API, MLflow tracking server, PostgreSQL backend, MinIO artifact storage, and API logs. The API image copies the exported, versioned bundle from `Task3/models/06_inference_bundle.joblib`; `src/model_registry_export.py` logs the same fitted bundle to MLflow without refitting. Raw CSV files and generated reports remain excluded from the image. For a clean clone, provide the bundle through DVC or another artifact store before building the API image.
-
-## Continuous integration
-
-The workflow runs Ruff, Black and the test suite on pushes to `main` and pull requests. It always builds the API image using a fitted synthetic test bundle and checks the container user, `/ready`, and `/predict`. CI-generated bundles are never published as production artifacts. Real model acceptance still requires testing the version restored from the configured artifact store.
-
-## Data validation and versioning
-
-`src/validation.py` rejects missing fields, nulls, non-numeric and non-finite numbers, invalid counts, malformed state codes and invalid dates. Pydantic rejects non-finite floats; validation responses exclude raw input so invalid JSON numbers cannot cause a secondary 500. Naive Olist timestamps mean Sao Paulo local wall-clock time. Zoned timestamps convert to that clock before feature extraction. Task 2 Notebook 5 imports the same feature builder as serving.
-
-DVC is initialized in `.dvc/`. From the repository root, in the activated environment:
+From the repository root in an activated Python 3.11–3.13 environment:
 
 ```bash
-# After generating the real Task 2 bundle:
+python -m pip install -r Task3/requirements-dev.txt
+python -m Task2.src.corrected_training
 dvc repro Task3/dvc.yaml
-# Configure YOUR existing artifact store (credentials belong in --local config).
-dvc remote add --local -d artifacts /path/to/shared/artifact-store
-dvc push Task3/dvc.yaml
-git add Task3/dvc.lock
-git commit -m "Version the trained inference bundle"
+python -m uvicorn Task3.app.main:app --port 8000
 ```
 
-A local filesystem remote needs no extra backend. For S3 install `dvc[s3]==3.59.1` and configure your bucket and credentials locally. In another checkout with that committed lock file and access to the same remote:
+Training needs the official CSVs and joined artifact; see Task2/README.md. To restore the exact trained candidate instead, extract `Olist_Calendar_Day_V3_Artifacts.zip` at the repository root and run `dvc checkout Task3/dvc.yaml`. It includes the current model and matching DVC cache; raw data is not included. A normal source clone contains no model bytes.
+
+Environment variables are read from the process environment; YAML files and `.env.example` are documentation, not automatically loaded configuration. Default model path is `Task2/artifacts/models/06_inference_bundle.joblib`. Set `MLOPS_PROJECT_ROOT` if starting outside the repository.
+
+## API
+
+| Route | Meaning |
+|---|---|
+| `/live` | Process liveness |
+| `/ready`, `/health` | Load/validate the same cached fitted bundle; 503 if unusable |
+| `/model/info` | Model/version, threshold, feature count, target definition and prediction stage |
+| `/predict` | Single order, score and versioned target/stage |
+| `/predict/batch` | 1–100 orders, input order preserved |
+| `/metrics` | Prometheus counters and latency |
+| `/docs` | Request schema and examples |
+
+The v3 API accepts omitted payment fields. If supplied they are validated but excluded from v3 features because historical availability is unverified. Legacy bundles still require payment inputs and use their historical feature behavior. The loader rejects incompatible v3 target/stage metadata.
+
+Use the seller state of the smallest `order_item_id`, including multi-seller orders. Input dates use Sao Paulo local wall time; zoned timestamps convert to that zone. Approval cannot precede purchase. Scores are not calibrated probabilities.
+
+## Docker and permissions
+
+Export or restore `Task3/models/06_inference_bundle.joblib` first, then from the repository root:
 
 ```bash
-dvc remote add --local -d artifacts /path/to/shared/artifact-store
-dvc pull Task3/dvc.yaml
-docker build -f Task3/Dockerfile -t olist-late-delivery-api:task3-v1 .
+docker build -f Task3/Dockerfile -t olist-api .
+docker run --rm -p 8000:8000 olist-api
+# Full local stack:
+docker compose -f Task3/docker-compose.yml up --build
 ```
 
-The committed `Task3/dvc.lock` pins the improved real Olist model, not the CI fixture. `docs/real_olist_verification.json` records the historical baseline; `docs/improved_olist_verification.json` records the current candidate and its SHA-256. A DVC remote still requires storage configured and populated by the owner. Alternatively extract `Olist_Improved_Model_Artifacts.zip` at the repository root and run `dvc checkout Task3/dvc.yaml` to restore the exact model from the included DVC cache. The package also retains the baseline for rollback.
+Compose runs the API as UID 10001 and probes `/ready`. New log volumes inherit the image directory ownership. For an older root-owned volume, stop the API and fix ownership once using `docker compose -f Task3/docker-compose.yml run --rm --user 0 --no-deps --entrypoint chown api -R 10001:10001 /app/Task3/logs`, then start normally. Do not delete existing logs to fix permissions. Restart the service whenever the bundle changes, because objects are cached per process.
 
-The candidate improves test F1 from 0.1560 to 0.1703, precision from 0.0936 to 0.1145 and ROC-AUC from 0.6451 to 0.6904, while recall decreases from 0.4681 to 0.3323. These are limited gains with a clear tradeoff. See `Task2/docs/MODEL_IMPROVEMENT.md` for full results and test-exposure limitations.
+## DVC
 
-## MLflow and artifact storage
+`.dvc/` is initialized. `Task3/dvc.yaml` exports the validated canonical model and tracks contract, feature and training source dependencies. The committed lock refers to the exact real v3 model.
 
-The Compose stack starts MLflow with PostgreSQL as its backend store and MinIO as its S3-compatible artifact store. After the stack is running and the local Task 2 bundle exists, register the fitted bundle with:
+```bash
+dvc repro Task3/dvc.yaml
+dvc remote add --local -d artifacts /path/to/your/shared/store
+dvc push Task3/dvc.yaml
+# In another checkout, configure the same remote, then:
+dvc pull Task3/dvc.yaml
+```
 
-```powershell
-$env:MLFLOW_TRACKING_URI = "http://localhost:5000"
-$env:MLFLOW_S3_ENDPOINT_URL = "http://localhost:9000"
-$env:AWS_ACCESS_KEY_ID = "minioadmin"
-$env:AWS_SECRET_ACCESS_KEY = "minioadmin"
+Store credentials locally. S3 remotes additionally need `dvc[s3]==3.59.1`. Source Git contains checksums, not model/cache bytes. The supplied artifact archive is an alternative to a remote for restoring this exact version.
+
+## MLflow
+
+Compose includes MLflow, PostgreSQL and MinIO. For registration from the host, set `MLFLOW_TRACKING_URI=http://localhost:5000`, `MLFLOW_S3_ENDPOINT_URL=http://localhost:9000`, and local MinIO access credentials (`minioadmin` defaults in this development stack), then run:
+
+```bash
 python -m Task3.src.model_registry_export
 ```
 
-The helper records metadata and creates an actual registered MLflow pyfunc model version containing the fitted bundle and serving code. It does not automatically promote a version to Production. To serve a reviewed version, set `MODEL_SOURCE=mlflow`, `MODEL_URI=models:/olist-late-delivery/<version>` and the tracking/S3 connection variables, then restart the API to clear its process-local cache. Local mode remains `MODEL_SOURCE=local` with `MODEL_BUNDLE_PATH`. These variables are read from the process environment; YAML files and `.env.example` are documentation, not automatically loaded configuration. It never refits a model. MLflow is available at `http://127.0.0.1:5000`, and MinIO's console is available at `http://127.0.0.1:9001`.
+This creates a real registered pyfunc version containing code and fitted bundle; it does not automatically promote it. To load a reviewed version, set `MODEL_SOURCE=mlflow`, `MODEL_URI=models:/olist-late-delivery/<version>`, connection variables, then restart. To use a local file, set `MODEL_SOURCE=local` and optionally `MODEL_BUNDLE_PATH`.
 
-## Monitoring and logs
+## Verification
 
-Prometheus-format metrics are available at `http://127.0.0.1:8000/metrics`. The service exposes request count, request latency, unexpected-error count, and prediction count by class and model version. API logs and prediction events are written to `Task3/logs` locally or the Compose `api_logs` volume. Alert candidates are sustained 5xx errors, p95 latency above the agreed service target, and a sudden change in the `late` prediction ratio; actual delivery outcomes should be joined later to calculate drift and realized performance.
+```bash
+ruff check Task3 Task2/src
+black --check Task3 Task2/src
+python -m pytest -q Task3/tests
+```
 
+Tests cover calendar boundaries/time zones, as-of label availability, leakage exclusions, serialized inference, contract mismatch, invalid inputs, MLflow registry round trips and DVC restore. CI always builds/smoke-tests a non-root container with a clearly labelled synthetic **v3-contract** bundle. It never publishes that fixture as a production model. Real v3 API verification is recorded in `docs/v3_api_verification.json`; historical v1/v2 reports are retained separately.
 
-
-## Readiness and container permissions
-
-`/live` reports process liveness. `/ready` and `/health` load and validate the cached model bundle, including fitted sklearn objects and feature order, and return 503 when it cannot be used. Compose probes `/ready` and runs as UID 10001. New log volumes inherit the image directory ownership. If an older volume was created by root, stop the API and fix ownership once using `docker compose run --rm --user 0 --no-deps --entrypoint chown api -R 10001:10001 /app/Task3/logs`, then start it normally. Do not delete an existing log volume to fix permissions. Model changes require a service restart.
-
-
-## Improved model input and artifact policy
-
-`Task2/src/improve_model.py` trains the improved candidate using the same temporal split. Seller state is the state of the seller for the first item by `order_item_id`, including multi-seller orders. It must match that policy at inference. Static geographic reference dictionaries are stored inside the preprocessing pipeline, which computes buyer coordinates, seller-state median coordinates and an approximate straight-line distance. This is not exact seller location or road distance. No raw CSV or network access is needed during inference. Restart the service after changing the bundle and inspect `/model/info` for its version. See `Task2/docs/model_improvement_results.json` for the exact comparison and limitations.
+Logs rotate for API messages and append prediction events as JSONL. Monitoring is descriptive; live drift/performance needs real outcomes and operational thresholds. Current predictive quality is weak and the June–August evaluation was previously inspected, so it is not blind evidence.

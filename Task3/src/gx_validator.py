@@ -5,6 +5,7 @@ from __future__ import annotations
 import pandas as pd
 
 from .validation import validate_prediction_frame
+from .contract import PAYMENT_FIELDS
 
 
 def validate_with_great_expectations(frame: pd.DataFrame) -> None:
@@ -24,6 +25,8 @@ def validate_with_great_expectations(frame: pd.DataFrame) -> None:
 
     dataset = gx.from_pandas(frame)
     for column in frame.columns:
+        if column in PAYMENT_FIELDS and frame[column].isna().all():
+            continue
         dataset.expect_column_values_to_not_be_null(column)
     for column in (
         "customer_zip_code_prefix",
@@ -40,6 +43,10 @@ def validate_with_great_expectations(frame: pd.DataFrame) -> None:
         "total_payment_value",
         "max_payment_installments",
     ):
+        if column not in frame or (
+            column in PAYMENT_FIELDS and frame[column].isna().all()
+        ):
+            continue
         dataset.expect_column_values_to_be_between(column, min_value=0)
 
     result = dataset.validate()
